@@ -1,0 +1,7 @@
+﻿services:
+  startingpoint:
+    image: startingpoint
+    build:
+      context: .
+      dockerfile: StartingPoint/Dockerfile
+
