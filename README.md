@@ -4,7 +4,9 @@ Startingpoint is a tool to build itineraries everywhere, anywhere, easily. From 
 
 ## Domain
 
-    Trip
+### Trip [Aggregate]
+
+    Trip [Root]
      ├── Id
      ├── Name
      ├── Destination
@@ -21,6 +23,6 @@ Startingpoint is a tool to build itineraries everywhere, anywhere, easily. From 
      ├── Address
      └── Notes
     
-    POICategory
+    POICategory [Enum]
      ├── Id
      └── Name
