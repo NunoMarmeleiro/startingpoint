@@ -22,10 +22,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore StartingPoint.sln
+        run: dotnet restore StartingPoint/StartingPoint.sln
 
       - name: Build
-        run: dotnet build StartingPoint.sln --no-restore --configuration Release
+        run: dotnet build StartingPoint/StartingPoint.sln --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test StartinPoint.sln --no-build --configuration Release
+        run: dotnet test StartingPoint/StartinPoint.sln --no-build --configuration Release
