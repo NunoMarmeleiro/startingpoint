@@ -15,19 +15,29 @@ public class TripController : ControllerBase
         _tripService =  tripService;
     }
     
-    [HttpPost("/create")]
+    [HttpPost]
     public async Task<ActionResult<TripResponseDTO>> CreateTrip(
         CreateTripRequestDTO request)
     {
         var response = await _tripService.CreateTrip(request);
-        return Ok(response);
+        return CreatedAtAction(
+            nameof(GetTripById),
+            new { id = response.Id },
+            response);
     }
     
-    [HttpGet("/get-by-id/{{id}}")]
+    [HttpGet("{id:guid}")]
 
     public async Task<ActionResult<TripResponseDTO>> GetTripById(Guid id)
     {
         var response = await _tripService.GetTripById(id);
         return Ok(response);
+    }
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
+    {
+        var trips = await _tripService.GetAllTrips();
+
+        return Ok(trips);
     }
 }

@@ -81,7 +81,7 @@ public class TripServiceTests
             .Setup(repository => repository.GetByIdAsync(id))
             .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
 
-        await Assert.ThrowsAsync<NotFoundException>(
+        await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.GetTripById(id));
 
         _repositoryMock.Verify(
@@ -146,5 +146,73 @@ public class TripServiceTests
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(It.IsAny<StartingPoint.Trip.Domain.Trip>()),
             Times.Never);
+    }
+    
+    [Fact]
+    public async Task GetAllTrips_ShouldReturnAllTrips()
+    {
+        // Arrange
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 15));
+        
+        var dateRange2 = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 15));
+        var trips = new List<StartingPoint.Trip.Domain.Trip>
+        {
+            StartingPoint.Trip.Domain.Trip.Create(
+                "Japan",
+                "Tokyo",
+                dateRange),
+
+            StartingPoint.Trip.Domain.Trip.Create(
+                "Portugal",
+                "Porto",
+                dateRange2)
+        };
+
+        _repositoryMock
+            .Setup(repository => repository.GetAllAsync())
+            .ReturnsAsync(trips);
+
+        // Act
+        var result = await _tripService.GetAllTrips();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count());
+
+        Assert.Contains(result, trip =>
+            trip.Name == "Japan" &&
+            trip.Destination == "Tokyo");
+
+        Assert.Contains(result, trip =>
+            trip.Name == "Portugal" &&
+            trip.Destination == "Porto");
+
+        _repositoryMock.Verify(
+            repository => repository.GetAllAsync(),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task GetAllTrips_WhenNoTripsExist_ShouldReturnEmptyCollection()
+    {
+        // Arrange
+        _repositoryMock
+            .Setup(repository => repository.GetAllAsync())
+            .ReturnsAsync(new List<StartingPoint.Trip.Domain.Trip>());
+
+        // Act
+        var result = await _tripService.GetAllTrips();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result);
+
+        _repositoryMock.Verify(
+            repository => repository.GetAllAsync(),
+            Times.Once);
     }
 }

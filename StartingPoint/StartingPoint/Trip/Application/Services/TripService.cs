@@ -40,8 +40,7 @@ public class TripService
         var trip = await _repository.GetByIdAsync(id);
         if (trip is null)
         {
-            throw new NotFoundException(
-                $"Trip with id '{id}' was not found.");
+            throw new EntityNotFoundException(nameof(Trip), id);
         }
         return new TripResponseDTO(
             trip.Id,
@@ -76,5 +75,19 @@ public class TripService
         trip.AddPointOfInterest(pointOfInterest);
 
         await _repository.UpdateAsync(trip);
+    }
+    
+    public async Task<IEnumerable<TripResponseDTO>> GetAllTrips()
+    {
+        var trips = await _repository.GetAllAsync();
+
+        return trips.Select(trip => new TripResponseDTO
+        (
+            trip.Id,
+            trip.Name,
+            trip.Destination,
+            trip.DateRange.Start,
+            trip.DateRange.End
+        ));
     }
 }

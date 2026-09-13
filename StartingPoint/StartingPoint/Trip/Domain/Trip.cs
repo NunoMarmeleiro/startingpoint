@@ -15,6 +15,10 @@ public class Trip
     public IReadOnlyCollection<PointOfInterest> PointsOfInterest =>
         _pointsOfInterest.AsReadOnly();
 
+    private Trip()
+    {
+    }
+    
     private Trip(
         Guid id,
         string name,

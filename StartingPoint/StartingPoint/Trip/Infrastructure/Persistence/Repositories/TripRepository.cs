@@ -23,4 +23,9 @@ public class TripRepository(TripDbContext dbContext) : ITripRepository
         dbContext.Trips.Update(trip);
         await dbContext.SaveChangesAsync();
     }
+    
+    public async Task<IEnumerable<Domain.Trip>> GetAllAsync()
+    {
+        return await dbContext.Trips.ToListAsync();
+    }
 }

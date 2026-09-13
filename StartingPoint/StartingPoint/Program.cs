@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using StartingPoint.Common.Exceptions;
 using StartingPoint.Trip.Application.Repositories;
 using StartingPoint.Trip.Application.Services;
 using StartingPoint.Trip.Infrastructure.Persistence;
@@ -31,6 +32,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
