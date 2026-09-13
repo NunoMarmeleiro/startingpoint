@@ -1,10 +1,14 @@
+import { Routes, Route } from "react-router-dom"
+import TripList from "./components/trips/TripList"
+
 function App() {
-  return (
-      <div>
-        <h1>StartingPoint</h1>
-        <p>My Trips</p>
-      </div>
-  )
+    return (
+        <main className="page">
+            <Routes>
+                <Route path="/" element={<TripList />} />
+            </Routes>
+        </main>
+    )
 }
 
 export default App

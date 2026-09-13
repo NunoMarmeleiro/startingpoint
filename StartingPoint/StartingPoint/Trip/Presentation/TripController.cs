@@ -37,7 +37,6 @@ public class TripController : ControllerBase
     public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
     {
         var trips = await _tripService.GetAllTrips();
-
         return Ok(trips);
     }
 }

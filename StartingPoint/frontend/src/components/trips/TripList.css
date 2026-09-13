@@ -1,0 +1,22 @@
+.trip-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.trip-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.trip-list__title {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.trip-list__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+}
