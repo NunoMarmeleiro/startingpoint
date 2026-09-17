@@ -1,15 +1,22 @@
-import { useState } from "react"
-import { createTrip } from "../../services/tripService"
+import { useEffect, useState } from "react"
+import { createTrip, updateTrip } from "../../services/tripService"
 import "./CreateTripModal.css"
 import type { Trip } from "../../models/Trip"
 import * as React from "react";
 
 type CreateTripModalProps = {
-    onClose: () => void
-    onCreated: (trip: Trip) => void
+    onCreated?: (trip: Trip) => void,
+    onUpdated?: (trip: Trip) => void,
+    onClose: () => void,
+    tripToEdit?: Trip | null
 }
 
-function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
+function CreateTripModal({
+                             onClose,
+                             onCreated,
+                             onUpdated,
+                             tripToEdit,
+                         }: CreateTripModalProps) {
     const [isClosing, setIsClosing] = useState(false)
 
     const [name, setName] = useState("")
@@ -19,6 +26,24 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
     const [dateError, setDateError] = useState("")
     const [error, setError] = useState("")
 
+    useEffect(() => {
+        setDateError("")
+        setError("")
+
+        if (!tripToEdit) {
+            setName("")
+            setDestination("")
+            setStartDate("")
+            setEndDate("")
+            return
+        }
+
+        setName(tripToEdit.name)
+        setDestination(tripToEdit.destination)
+        setStartDate(tripToEdit.startDate)
+        setEndDate(tripToEdit.endDate)
+    }, [tripToEdit])
+    
     function handleClose() {
         setIsClosing(true)
     }
@@ -43,18 +68,32 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
         setError("")
 
         try {
-            const createdTrip = await createTrip({
-                name,
-                destination,
-                startDate,
-                endDate,
-            })
+            if (tripToEdit) {
+                const updatedTrip = await updateTrip(tripToEdit.id, {
+                    name,
+                    destination,
+                    startDate,
+                    endDate,
+                })
 
-            onCreated(createdTrip)
+                onUpdated?.(updatedTrip)
+            } else {
+                const createdTrip = await createTrip({
+                    name,
+                    destination,
+                    startDate,
+                    endDate,
+                })
+
+                onCreated?.(createdTrip)
+            }
+
             handleClose()
         } catch {
             setError(
-                "Something went wrong while creating the trip. Please try again."
+                tripToEdit
+                    ? "Something went wrong while updating the trip. Please try again."
+                    : "Something went wrong while creating the trip. Please try again."
             )
         }
     }
@@ -73,7 +112,7 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
             >
                 <header className="create-trip-modal__header">
                     <div>
-                        <h2>Create a new trip</h2>
+                        <h2>{tripToEdit ? "Edit trip" : "Create trip"}</h2>
                         <p>Plan your next adventure.</p>
                     </div>
 
@@ -171,11 +210,8 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
                             Cancel
                         </button>
 
-                        <button
-                            type="submit"
-                            className="button button--primary"
-                        >
-                            Create Trip
+                        <button type="submit" className="button button--primary">
+                            {tripToEdit ? "Save changes" : "Create trip"}
                         </button>
                     </div>
                 </form>
