@@ -47,11 +47,11 @@ jobs:
           cache-dependency-path: StartingPoint/frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: frontend
+        working-directory: StartingPoint/frontend
         run: npm ci
 
       - name: ESLint
-        working-directory: frontend
+        working-directory: StartingPoint/frontend
         run: npm run lint
 
   frontend-build:
@@ -70,9 +70,9 @@ jobs:
           cache-dependency-path: StartingPoint/frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: frontend
+        working-directory: StartingPoint/frontend
         run: npm ci
 
       - name: Build
-        working-directory: frontend
+        working-directory: StartingPoint/frontend
         run: npm run build
