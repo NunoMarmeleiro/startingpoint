@@ -1,0 +1,24 @@
+@import "./styles/variables.css";
+@import "./styles/layout.css";
+@import "./styles/buttons.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+
+  background-color: var(--color-background);
+  color: var(--color-text);
+}

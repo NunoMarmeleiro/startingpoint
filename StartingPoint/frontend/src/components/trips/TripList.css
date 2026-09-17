@@ -1,0 +1,67 @@
+.trip-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.trip-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.trip-list__title {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.trip-list__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.trip-list__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 300px;
+    padding: var(--spacing-xl);
+
+    text-align: center;
+
+    background-color: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+.trip-list__empty h2 {
+    margin: 0 0 var(--spacing-sm);
+    font-size: 1.5rem;
+}
+
+.trip-list__empty p {
+    max-width: 500px;
+    margin: 0 0 var(--spacing-lg);
+
+    color: var(--color-text-muted);
+}
+
+.trip-card__dates {
+    margin: var(--spacing-md) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.trip-list__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 300px;
+
+    color: var(--color-text-muted);
+}
