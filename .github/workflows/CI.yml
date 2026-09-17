@@ -76,3 +76,26 @@ jobs:
       - name: Build
         working-directory: StartingPoint/frontend
         run: npm run build
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: StartingPoint/frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: StartingPoint/frontend
+        run: npm ci
+
+      - name: Test
+        working-directory: StartingPoint/frontend
+        run: npm test
