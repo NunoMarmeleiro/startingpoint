@@ -23,14 +23,13 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore StartingPoint.sln
+        run: dotnet restore StartingPoint/StartingPoint.sln
 
       - name: Build
-        run: dotnet build StartingPoint.sln --no-restore --configuration Release
+        run: dotnet build StartingPoint/StartingPoint.sln --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test StartingPoint.sln --no-build --configuration Release
-
+        run: dotnet test StartingPoint/StartingPoint.sln --no-build --configuration Release
 
   frontend-lint:
     name: Frontend ESLint
@@ -54,7 +53,6 @@ jobs:
       - name: ESLint
         working-directory: frontend
         run: npm run lint
-
 
   frontend-build:
     name: Frontend Build
