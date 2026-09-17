@@ -12,3 +12,10 @@ export type CreateTripRequest = {
     startDate: string
     endDate: string
 }
+
+export type UpdateTripRequest = {
+    name: string
+    destination: string
+    startDate: string
+    endDate: string
+}

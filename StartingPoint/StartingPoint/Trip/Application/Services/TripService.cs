@@ -90,4 +90,34 @@ public class TripService
             trip.DateRange.End
         ));
     }
+    
+    public async Task<TripResponseDTO> UpdateTrip(
+        Guid id,
+        UpdateTripRequestDTO request)
+    {
+        var trip = await _repository.GetByIdAsync(id);
+
+        if (trip is null)
+        {
+            throw new EntityNotFoundException(nameof(Trip), id);
+        }
+
+        var dateRange = DateRange.Create(
+            request.StartDate!.Value,
+            request.EndDate!.Value);
+
+        trip.Update(
+            request.Name,
+            request.Destination,
+            dateRange);
+
+        await _repository.UpdateAsync(trip);
+
+        return new TripResponseDTO(
+            trip.Id,
+            trip.Name,
+            trip.Destination,
+            trip.DateRange.Start,
+            trip.DateRange.End);
+    }
 }

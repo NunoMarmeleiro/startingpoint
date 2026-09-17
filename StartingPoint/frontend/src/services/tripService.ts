@@ -1,5 +1,8 @@
 import apiClient from "./apiClient"
-import type { Trip, CreateTripRequest } from "../models/Trip"
+import type { Trip,
+    CreateTripRequest, 
+    UpdateTripRequest,
+} from "../models/Trip"
 
 export async function getTrips(): Promise<Trip[]> {
     const response = await apiClient.get<Trip[]>("/api/trips")
@@ -22,6 +25,18 @@ export async function getTripById(
 ): Promise<Trip> {
     const response = await apiClient.get<Trip>(
         `/api/trips/${id}`
+    )
+
+    return response.data
+}
+
+export async function updateTrip(
+    id: string,
+    request: UpdateTripRequest
+): Promise<Trip> {
+    const response = await apiClient.put<Trip>(
+        `/api/trips/${id}`,
+        request
     )
 
     return response.data
