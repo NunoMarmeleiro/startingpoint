@@ -11,15 +11,25 @@ public sealed record DateRange
         End = end;
     }
 
-    public static DateRange Create(DateOnly start, DateOnly end)
+    public static DateRange Create(DateOnly? start, DateOnly? end)
     {
+        if (!start.HasValue)
+        {
+            throw new ArgumentException("There must be a start date");
+        }
+        
+        if (!end.HasValue)
+        {
+            throw new ArgumentException("There must be an end date");
+        }
+        
         if (end < start)
         {
             throw new ArgumentException(
                 "The end date cannot be before the start date.");
         }
 
-        return new DateRange(start, end);
+        return new DateRange(start.Value, end.Value);
     }
 
     public int DurationInDays =>

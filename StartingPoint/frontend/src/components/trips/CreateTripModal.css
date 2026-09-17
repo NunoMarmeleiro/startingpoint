@@ -177,3 +177,25 @@
         width: 100%;
     }
 }
+
+.form-field__error {
+    margin: 0;
+
+    color: #dc2626;
+    font-size: 0.875rem;
+}
+
+.required {
+    color: #dc2626;
+}
+
+.create-trip__error {
+    margin: 0 0 var(--spacing-lg);
+    padding: var(--spacing-md);
+
+    color: #b42318;
+    background-color: #fef3f2;
+
+    border: 1px solid #fecdca;
+    border-radius: var(--radius-md);
+}

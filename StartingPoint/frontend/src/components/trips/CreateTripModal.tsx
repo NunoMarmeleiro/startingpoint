@@ -14,6 +14,10 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
 
     const [name, setName] = useState("")
     const [destination, setDestination] = useState("")
+    const [startDate, setStartDate] = useState("")
+    const [endDate, setEndDate] = useState("")
+    const [dateError, setDateError] = useState("")
+    const [error, setError] = useState("")
 
     function handleClose() {
         setIsClosing(true)
@@ -30,13 +34,29 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
     ) {
         event.preventDefault()
 
-        const createdTrip = await createTrip({
-            name,
-            destination,
-        })
+        if (endDate < startDate) {
+            setDateError("End date cannot be before start date.")
+            return
+        }
 
-        onCreated(createdTrip)
-        handleClose()
+        setDateError("")
+        setError("")
+
+        try {
+            const createdTrip = await createTrip({
+                name,
+                destination,
+                startDate,
+                endDate,
+            })
+
+            onCreated(createdTrip)
+            handleClose()
+        } catch {
+            setError(
+                "Something went wrong while creating the trip. Please try again."
+            )
+        }
     }
 
     return (
@@ -66,12 +86,20 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
                     </button>
                 </header>
 
+                {error && (
+                    <p className="create-trip__error">
+                        {error}
+                    </p>
+                )}
+
                 <form
                     className="create-trip__form"
                     onSubmit={handleSubmit}
                 >
                     <div className="form-field">
-                        <label htmlFor="name">Trip name</label>
+                        <label htmlFor="name">
+                            Trip name <span className="required">*</span>
+                        </label>
 
                         <input
                             id="name"
@@ -79,11 +107,14 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
                             value={name}
                             onChange={(event) => setName(event.target.value)}
                             placeholder="e.g. Japan Adventure"
+                            required
                         />
                     </div>
 
                     <div className="form-field">
-                        <label htmlFor="destination">Destination</label>
+                        <label htmlFor="destination">
+                            Destination <span className="required">*</span>
+                        </label>
 
                         <input
                             id="destination"
@@ -93,8 +124,43 @@ function CreateTripModal({ onClose, onCreated }: CreateTripModalProps) {
                                 setDestination(event.target.value)
                             }
                             placeholder="e.g. Tokyo, Japan"
+                            required
                         />
                     </div>
+                    <div className="form-field">
+                        <label htmlFor="startDate">
+                            Start date <span className="required">*</span>
+                        </label>
+
+                        <input
+                            id="startDate"
+                            type="date"
+                            value={startDate}
+                            onChange={(event) => setStartDate(event.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-field">
+                        <label htmlFor="endDate">
+                            End date <span className="required">*</span>
+                        </label>
+
+                        <input
+                            id="endDate"
+                            type="date"
+                            value={endDate}
+                            min={startDate}
+                            onChange={(event) => setEndDate(event.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    {dateError && (
+                        <p className="form-field__error">
+                            {dateError}
+                        </p>
+                    )}
 
                     <div className="create-trip__actions">
                         <button

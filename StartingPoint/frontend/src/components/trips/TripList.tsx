@@ -8,10 +8,19 @@ import CreateTripModal from "./CreateTripModal"
 function TripList() {
     const [trips, setTrips] = useState<Trip[]>([])
     const [isCreateTripOpen, setIsCreateTripOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        getTrips()
-            .then((data) => setTrips(data))
+        async function loadTrips() {
+            try {
+                const data = await getTrips()
+                setTrips(data)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        loadTrips()
     }, [])
 
     return (
@@ -27,15 +36,39 @@ function TripList() {
                 </button>
             </header>
 
-            <div className="trip-list__grid">
-                {trips.map((trip) => (
-                    <TripCard
-                        key={trip.id}
-                        name={trip.name}
-                        destination={trip.destination}
-                    />
-                ))}
-            </div>
+            {isLoading ? (
+                <div className="trip-list__loading">
+                    <p>Loading your trips...</p>
+                </div>
+            ) : trips.length === 0 ? (
+                <div className="trip-list__empty">
+                    <h2>No trips yet</h2>
+
+                    <p>
+                        You don't have any trips yet. Create your first trip
+                        and start planning your adventure!
+                    </p>
+
+                    <button
+                        className="button button--primary"
+                        onClick={() => setIsCreateTripOpen(true)}
+                    >
+                        Create your first trip
+                    </button>
+                </div>
+            ) : (
+                <div className="trip-list__grid">
+                    {trips.map((trip) => (
+                        <TripCard
+                            key={trip.id}
+                            name={trip.name}
+                            destination={trip.destination}
+                            startDate={trip.startDate}
+                            endDate={trip.endDate}
+                        />
+                    ))}
+                </div>
+            )}
             {isCreateTripOpen && (
                 <CreateTripModal
                     onClose={() => setIsCreateTripOpen(false)}
