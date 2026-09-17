@@ -10,6 +10,7 @@ namespace StartingPoint.Trip.Presentation;
 public class TripController : ControllerBase
 {
     private readonly TripService _tripService;
+    
     public TripController(TripService tripService)
     {
         _tripService =  tripService;
@@ -27,16 +28,41 @@ public class TripController : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
-
     public async Task<ActionResult<TripResponseDTO>> GetTripById(Guid id)
     {
         var response = await _tripService.GetTripById(id);
         return Ok(response);
     }
+    
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
     {
         var trips = await _tripService.GetAllTrips();
         return Ok(trips);
+    }
+    
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<TripResponseDTO>> UpdateTrip(
+        Guid id,
+        UpdateTripRequestDTO request)
+    {
+        var trip = await _tripService.UpdateTrip(id, request);
+        return Ok(trip);
+    }
+    
+    [HttpPost("{tripId:guid}/points-of-interest")]
+    public async Task<IActionResult> AddPointOfInterest(
+        Guid tripId,
+        AddPointOfInterestRequestDTO request)
+    {
+        await _tripService.AddPointOfInterest(
+            tripId,
+            request.Name,
+            request.Category,
+            request.Description,
+            request.Address,
+            request.Notes);
+
+        return NoContent();
     }
 }

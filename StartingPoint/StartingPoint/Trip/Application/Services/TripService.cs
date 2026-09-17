@@ -62,7 +62,7 @@ public class TripService
 
         if (trip is null)
         {
-            throw new InvalidOperationException("Trip was not found.");
+            throw new EntityNotFoundException(nameof(Trip), tripId);
         }
 
         var pointOfInterest = PointOfInterest.Create(
