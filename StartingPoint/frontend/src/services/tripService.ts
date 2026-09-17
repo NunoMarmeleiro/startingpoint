@@ -16,3 +16,13 @@ export async function createTrip(
 
     return response.data
 }
+
+export async function getTripById(
+    id: string
+): Promise<Trip> {
+    const response = await apiClient.get<Trip>(
+        `/api/trips/${id}`
+    )
+
+    return response.data
+}

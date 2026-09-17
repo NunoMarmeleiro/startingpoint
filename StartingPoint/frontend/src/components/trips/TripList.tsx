@@ -61,10 +61,7 @@ function TripList() {
                     {trips.map((trip) => (
                         <TripCard
                             key={trip.id}
-                            name={trip.name}
-                            destination={trip.destination}
-                            startDate={trip.startDate}
-                            endDate={trip.endDate}
+                            trip={trip}
                         />
                     ))}
                 </div>

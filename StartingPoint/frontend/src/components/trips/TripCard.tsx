@@ -1,30 +1,20 @@
+import { Link } from "react-router-dom"
+import type { Trip } from "../../models/Trip"
 import "./TripCard.css"
 
-type TripCardProps = {
-    name: string
-    destination: string
-    startDate: string
-    endDate: string
-}
-
-function TripCard({
-                      name,
-                      destination,
-                      startDate,
-                      endDate,
-                  }: TripCardProps) {
+function TripCard({ trip }: { trip: Trip }) {
     return (
-        <article className="trip-card">
-            <h2 className="trip-card__name">{name}</h2>
+        <Link to={`/trips/${trip.id}`} className="trip-card">
+            <h2 className="trip-card__name">{trip.name}</h2>
 
             <p className="trip-card__destination">
-                {destination}
+                {trip.destination}
             </p>
 
             <p className="trip-card__dates">
-                {startDate} → {endDate}
+                {trip.startDate} → {trip.endDate}
             </p>
-        </article>
+        </Link>
     )
 }
 
