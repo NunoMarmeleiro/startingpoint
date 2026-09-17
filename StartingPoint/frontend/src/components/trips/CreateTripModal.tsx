@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { createTrip, updateTrip } from "../../services/tripService"
 import "./CreateTripModal.css"
 import type { Trip } from "../../models/Trip"
@@ -19,30 +19,20 @@ function CreateTripModal({
                          }: CreateTripModalProps) {
     const [isClosing, setIsClosing] = useState(false)
 
-    const [name, setName] = useState("")
-    const [destination, setDestination] = useState("")
-    const [startDate, setStartDate] = useState("")
-    const [endDate, setEndDate] = useState("")
+    const [name, setName] = useState(tripToEdit?.name ?? "")
+    const [destination, setDestination] = useState(
+        tripToEdit?.destination ?? ""
+    )
+    const [startDate, setStartDate] = useState(
+        tripToEdit?.startDate ?? ""
+    )
+    const [endDate, setEndDate] = useState(
+        tripToEdit?.endDate ?? ""
+    )
+    
     const [dateError, setDateError] = useState("")
     const [error, setError] = useState("")
-
-    useEffect(() => {
-        setDateError("")
-        setError("")
-
-        if (!tripToEdit) {
-            setName("")
-            setDestination("")
-            setStartDate("")
-            setEndDate("")
-            return
-        }
-
-        setName(tripToEdit.name)
-        setDestination(tripToEdit.destination)
-        setStartDate(tripToEdit.startDate)
-        setEndDate(tripToEdit.endDate)
-    }, [tripToEdit])
+    
     
     function handleClose() {
         setIsClosing(true)
