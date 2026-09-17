@@ -215,4 +215,99 @@ public class TripServiceTests
             repository => repository.GetAllAsync(),
             Times.Once);
     }
+    
+    [Fact]
+    public async Task UpdateTrip_ShouldUpdateTrip()
+    {
+        var originalDateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            originalDateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        var newStartDate = new DateOnly(2026, 11, 1);
+        var newEndDate = new DateOnly(2026, 11, 7);
+
+        var request = new UpdateTripRequestDTO(
+            "Madrid Trip",
+            "Madrid",
+            newStartDate,
+            newEndDate);
+
+        var result = await _tripService.UpdateTrip(
+            trip.Id,
+            request);
+
+        Assert.Equal(trip.Id, result.Id);
+        Assert.Equal("Madrid Trip", result.Name);
+        Assert.Equal("Madrid", result.Destination);
+        Assert.Equal(newStartDate, result.StartDate);
+        Assert.Equal(newEndDate, result.EndDate);
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(trip),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task UpdateTrip_ShouldThrowNotFoundException_WhenTripDoesNotExist()
+    {
+        var tripId = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(tripId))
+            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+
+        var request = new UpdateTripRequestDTO(
+            "Madrid Trip",
+            "Madrid",
+            new DateOnly(2026, 11, 1),
+            new DateOnly(2026, 11, 7));
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.UpdateTrip(tripId, request));
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
+    
+    [Fact]
+    public async Task UpdateTrip_ShouldThrow_WhenEndDateIsBeforeStartDate()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        var request = new UpdateTripRequestDTO(
+            "Madrid Trip",
+            "Madrid",
+            new DateOnly(2026, 11, 10),
+            new DateOnly(2026, 11, 5));
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => _tripService.UpdateTrip(trip.Id, request));
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
 }

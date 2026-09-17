@@ -39,4 +39,13 @@ public class TripController : ControllerBase
         var trips = await _tripService.GetAllTrips();
         return Ok(trips);
     }
+    
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<TripResponseDTO>> UpdateTrip(
+        Guid id,
+        UpdateTripRequestDTO request)
+    {
+        var trip = await _tripService.UpdateTrip(id, request);
+        return Ok(trip);
+    }
 }

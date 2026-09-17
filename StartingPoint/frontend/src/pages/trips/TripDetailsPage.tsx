@@ -2,11 +2,12 @@ import { useEffect, useState } from "react"
 import {Link, useParams} from "react-router-dom"
 import { getTripById } from "../../services/tripService"
 import type { Trip } from "../../models/Trip"
+import CreateTripModal from "../../components/trips/CreateTripModal"
 import "./TripDetailsPage.css"
 
 function TripDetailsPage() {
     const { id } = useParams<{ id: string }>()
-
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [trip, setTrip] = useState<Trip | null>(null)
 
     useEffect(() => {
@@ -59,6 +60,7 @@ function TripDetailsPage() {
                     <button
                         type="button"
                         className="button button--secondary"
+                        onClick={() => setIsEditModalOpen(true)}
                     >
                         Edit
                     </button>
@@ -91,6 +93,17 @@ function TripDetailsPage() {
                     </div>
                 </section>
             </div>
+
+            {isEditModalOpen && trip && (
+                <CreateTripModal
+                    tripToEdit={trip}
+                    onClose={() => setIsEditModalOpen(false)}
+                    onUpdated={(updatedTrip) => {
+                        setTrip(updatedTrip)
+                    }}
+                />
+            )}
+            
         </main>
     )
 }
