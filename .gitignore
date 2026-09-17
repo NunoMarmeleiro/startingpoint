@@ -62,3 +62,6 @@ nunit-*.xml
 
 #AI
 .ai/
+
+# Node
+node_modules/
