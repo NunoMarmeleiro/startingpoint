@@ -17,6 +17,7 @@ describe("CreateTripModal", () => {
             destination: "Barcelona",
             startDate: "2026-10-01",
             endDate: "2026-10-05",
+            pointsOfInterest: [],
         }
 
         render(
@@ -52,6 +53,7 @@ describe("CreateTripModal", () => {
             destination: "Barcelona",
             startDate: "2026-10-01",
             endDate: "2026-10-05",
+            pointsOfInterest: [],
         }
 
         const updatedTrip: Trip = {
@@ -122,6 +124,7 @@ describe("CreateTripModal", () => {
             destination: "Barcelona",
             startDate: "2026-10-01",
             endDate: "2026-10-05",
+            pointsOfInterest: [],
         }
 
         const updateTripMock = vi.mocked(
@@ -170,6 +173,7 @@ describe("CreateTripModal", () => {
             destination: "Barcelona",
             startDate: "2026-10-01",
             endDate: "2026-10-05",
+            pointsOfInterest: [],
         }
 
         const updateTripMock = vi.mocked(

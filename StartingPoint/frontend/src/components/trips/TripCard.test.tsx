@@ -12,6 +12,7 @@ describe("TripCard", () => {
             destination: "Barcelona",
             startDate: "2026-10-01",
             endDate: "2026-10-05",
+            pointsOfInterest: [],
         }
 
         render(
@@ -40,6 +41,7 @@ describe("TripCard", () => {
             destination: "Barcelona",
             startDate: "2026-10-01",
             endDate: "2026-10-05",
+            pointsOfInterest: [],
         }
 
         render(

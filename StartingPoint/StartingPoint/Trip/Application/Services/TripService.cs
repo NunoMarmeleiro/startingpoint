@@ -27,12 +27,23 @@ public class TripService
 
         await _repository.AddAsync(trip);
 
+
         return new TripResponseDTO(
             trip.Id,
             trip.Name,
             trip.Destination,
             trip.DateRange.Start,
-            trip.DateRange.End);
+            trip.DateRange.End,
+            trip.PointsOfInterest
+                .Select(poi => new PointOfInterestResponseDTO(
+                    poi.Id,
+                    poi.Name,
+                    poi.Description,
+                    poi.Category,
+                    poi.Address,
+                    poi.Notes))
+                .ToList()
+            );
     }
 
     public async Task<TripResponseDTO> GetTripById(Guid id)
@@ -47,7 +58,16 @@ public class TripService
             trip.Name,
             trip.Destination,
             trip.DateRange.Start,
-            trip.DateRange.End);
+            trip.DateRange.End,
+            trip.PointsOfInterest
+                .Select(poi => new PointOfInterestResponseDTO(
+                    poi.Id,
+                    poi.Name,
+                    poi.Description,
+                    poi.Category,
+                    poi.Address,
+                    poi.Notes))
+                .ToList());
     }
     
     public async Task AddPointOfInterest(
@@ -87,7 +107,16 @@ public class TripService
             trip.Name,
             trip.Destination,
             trip.DateRange.Start,
-            trip.DateRange.End
+            trip.DateRange.End,
+            trip.PointsOfInterest
+                .Select(poi => new PointOfInterestResponseDTO(
+                    poi.Id,
+                    poi.Name,
+                    poi.Description,
+                    poi.Category,
+                    poi.Address,
+                    poi.Notes))
+                .ToList()
         ));
     }
     
@@ -118,6 +147,15 @@ public class TripService
             trip.Name,
             trip.Destination,
             trip.DateRange.Start,
-            trip.DateRange.End);
+            trip.DateRange.End,
+            trip.PointsOfInterest
+                .Select(poi => new PointOfInterestResponseDTO(
+                    poi.Id,
+                    poi.Name,
+                    poi.Description,
+                    poi.Category,
+                    poi.Address,
+                    poi.Notes))
+                .ToList());
     }
 }
