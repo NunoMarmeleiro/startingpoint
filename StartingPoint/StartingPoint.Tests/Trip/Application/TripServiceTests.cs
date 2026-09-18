@@ -127,7 +127,7 @@ public class TripServiceTests
     }
     
     [Fact]
-    public async Task AddPointOfInterest_ShouldThrow_WhenTripDoesNotExist()
+    public async Task AddPointOfInterest_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var tripId = Guid.NewGuid();
 
@@ -135,16 +135,81 @@ public class TripServiceTests
             .Setup(repository => repository.GetByIdAsync(tripId))
             .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
+        await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.AddPointOfInterest(
                 tripId,
                 "Sagrada Família",
                 POICategory.HistoricalSite));
 
-        Assert.Equal("Trip was not found.", exception.Message);
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
+    
+    [Fact]
+    public async Task AddPointOfInterest_ShouldAddAllPointOfInterestInformation()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        await _tripService.AddPointOfInterest(
+            trip.Id,
+            "Sagrada Família",
+            POICategory.HistoricalSite,
+            "Famous basilica",
+            "Barcelona",
+            "Book tickets in advance");
+
+        var poi = Assert.Single(trip.PointsOfInterest);
+
+        Assert.Equal("Sagrada Família", poi.Name);
+        Assert.Equal(POICategory.HistoricalSite, poi.Category);
+        Assert.Equal("Famous basilica", poi.Description);
+        Assert.Equal("Barcelona", poi.Address);
+        Assert.Equal("Book tickets in advance", poi.Notes);
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            repository => repository.UpdateAsync(trip),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task AddPointOfInterest_ShouldThrow_WhenNameIsEmpty()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => _tripService.AddPointOfInterest(
+                trip.Id,
+                "",
+                POICategory.HistoricalSite));
+
+        Assert.Empty(trip.PointsOfInterest);
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(trip),
             Times.Never);
     }
     
