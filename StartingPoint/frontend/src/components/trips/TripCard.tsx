@@ -4,7 +4,7 @@ import "./TripCard.css"
 
 function TripCard({ trip }: { trip: Trip }) {
     return (
-        <Link to={`/trips/${trip.id}`} className="trip-card">
+        <Link to={`/trips/${trip.id}`} className="card trip-card">
             <h2 className="trip-card__name">{trip.name}</h2>
 
             <p className="trip-card__destination">

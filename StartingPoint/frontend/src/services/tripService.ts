@@ -3,6 +3,9 @@ import type { Trip,
     CreateTripRequest, 
     UpdateTripRequest,
 } from "../models/Trip"
+import type {
+    AddPointOfInterestRequest,
+} from "../models/PointOfInterest"
 
 export async function getTrips(): Promise<Trip[]> {
     const response = await apiClient.get<Trip[]>("/api/trips")
@@ -40,4 +43,14 @@ export async function updateTrip(
     )
 
     return response.data
+}
+
+export async function addPointOfInterest(
+    tripId: string,
+    request: AddPointOfInterestRequest
+): Promise<void> {
+    await apiClient.post(
+        `/api/trips/${tripId}/points-of-interest`,
+        request
+    )
 }

@@ -1,13 +1,12 @@
 import { useState } from "react"
+import * as React from "react"
 import { createTrip, updateTrip } from "../../services/tripService"
-import "./CreateTripModal.css"
 import type { Trip } from "../../models/Trip"
-import * as React from "react";
 
 type CreateTripModalProps = {
-    onCreated?: (trip: Trip) => void,
-    onUpdated?: (trip: Trip) => void,
-    onClose: () => void,
+    onCreated?: (trip: Trip) => void
+    onUpdated?: (trip: Trip) => void
+    onClose: () => void
     tripToEdit?: Trip | null
 }
 
@@ -18,6 +17,7 @@ function CreateTripModal({
                              tripToEdit,
                          }: CreateTripModalProps) {
     const [isClosing, setIsClosing] = useState(false)
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const [name, setName] = useState(tripToEdit?.name ?? "")
     const [destination, setDestination] = useState(
@@ -29,11 +29,10 @@ function CreateTripModal({
     const [endDate, setEndDate] = useState(
         tripToEdit?.endDate ?? ""
     )
-    
+
     const [dateError, setDateError] = useState("")
     const [error, setError] = useState("")
-    
-    
+
     function handleClose() {
         setIsClosing(true)
     }
@@ -47,8 +46,8 @@ function CreateTripModal({
     async function handleSubmit(
         event: React.SyntheticEvent<HTMLFormElement>
     ) {
+        
         event.preventDefault()
-
         if (endDate < startDate) {
             setDateError("End date cannot be before start date.")
             return
@@ -56,6 +55,7 @@ function CreateTripModal({
 
         setDateError("")
         setError("")
+        setIsSubmitting(true)
 
         try {
             if (tripToEdit) {
@@ -85,6 +85,8 @@ function CreateTripModal({
                     ? "Something went wrong while updating the trip. Please try again."
                     : "Something went wrong while creating the trip. Please try again."
             )
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -93,118 +95,153 @@ function CreateTripModal({
             className={`modal-backdrop ${
                 isClosing ? "modal-backdrop--closing" : ""
             }`}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) {
+                    handleClose()
+                }
+            }}
         >
             <section
-                className={`create-trip-modal ${
-                    isClosing ? "create-trip-modal--closing" : ""
+                className={`modal ${
+                    isClosing ? "modal--closing" : ""
                 }`}
                 onAnimationEnd={handleAnimationEnd}
             >
-                <header className="create-trip-modal__header">
+                <header className="modal__header">
                     <div>
-                        <h2>{tripToEdit ? "Edit trip" : "Create trip"}</h2>
+                        <h2>
+                            {tripToEdit ? "Edit trip" : "Create trip"}
+                        </h2>
+
                         <p>Plan your next adventure.</p>
                     </div>
 
                     <button
                         type="button"
-                        className="modal-close"
+                        className="modal__close"
                         onClick={handleClose}
+                        aria-label="Close"
                     >
                         ×
                     </button>
+                    
                 </header>
 
                 {error && (
-                    <p className="create-trip__error">
+                    <p className="modal__error">
                         {error}
                     </p>
                 )}
+                <div className="modal__content">
+                    <form
+                        id="create-trip-form"
+                        className="modal__form"
+                        onSubmit={handleSubmit}
+                    >
+                        
+                        
+                        <div className="modal__field">
+                            <label htmlFor="name">
+                                Trip name{" "}
+                                <span className="required">*</span>
+                            </label>
+    
+                            <input
+                                id="name"
+                                type="text"
+                                value={name}
+                                onChange={(event) =>
+                                    setName(event.target.value)
+                                }
+                                placeholder="e.g. Japan Adventure"
+                                required
+                            />
+                        </div>
+    
+                        <div className="modal__field">
+                            <label htmlFor="destination">
+                                Destination{" "}
+                                <span className="required">*</span>
+                            </label>
+    
+                            <input
+                                id="destination"
+                                type="text"
+                                value={destination}
+                                onChange={(event) =>
+                                    setDestination(event.target.value)
+                                }
+                                placeholder="e.g. Tokyo, Japan"
+                                required
+                            />
+                        </div>
+    
+                        <div className="modal__field">
+                            <label htmlFor="startDate">
+                                Start date{" "}
+                                <span className="required">*</span>
+                            </label>
+    
+                            <input
+                                id="startDate"
+                                type="date"
+                                value={startDate}
+                                onChange={(event) =>
+                                    setStartDate(event.target.value)
+                                }
+                                required
+                            />
+                        </div>
+    
+                        <div className="modal__field">
+                            <label htmlFor="endDate">
+                                End date{" "}
+                                <span className="required">*</span>
+                            </label>
+    
+                            <input
+                                id="endDate"
+                                type="date"
+                                value={endDate}
+                                min={startDate}
+                                onChange={(event) =>
+                                    setEndDate(event.target.value)
+                                }
+                                required
+                            />
+                        </div>
+    
+                        {dateError && (
+                            <p className="form-field__error">
+                                {dateError}
+                            </p>
+                        )}
+                    </form>
+                </div>
+                <div className="modal__actions">
+                    <button
+                        type="button"
+                        className="button button--secondary"
+                        onClick={handleClose}
+                        disabled={isSubmitting}
+                    >
+                        Cancel
+                    </button>
 
-                <form
-                    className="create-trip__form"
-                    onSubmit={handleSubmit}
-                >
-                    <div className="form-field">
-                        <label htmlFor="name">
-                            Trip name <span className="required">*</span>
-                        </label>
-
-                        <input
-                            id="name"
-                            type="text"
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                            placeholder="e.g. Japan Adventure"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-field">
-                        <label htmlFor="destination">
-                            Destination <span className="required">*</span>
-                        </label>
-
-                        <input
-                            id="destination"
-                            type="text"
-                            value={destination}
-                            onChange={(event) =>
-                                setDestination(event.target.value)
-                            }
-                            placeholder="e.g. Tokyo, Japan"
-                            required
-                        />
-                    </div>
-                    <div className="form-field">
-                        <label htmlFor="startDate">
-                            Start date <span className="required">*</span>
-                        </label>
-
-                        <input
-                            id="startDate"
-                            type="date"
-                            value={startDate}
-                            onChange={(event) => setStartDate(event.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-field">
-                        <label htmlFor="endDate">
-                            End date <span className="required">*</span>
-                        </label>
-
-                        <input
-                            id="endDate"
-                            type="date"
-                            value={endDate}
-                            min={startDate}
-                            onChange={(event) => setEndDate(event.target.value)}
-                            required
-                        />
-                    </div>
-                    
-                    {dateError && (
-                        <p className="form-field__error">
-                            {dateError}
-                        </p>
-                    )}
-
-                    <div className="create-trip__actions">
-                        <button
-                            type="button"
-                            className="button button--secondary"
-                            onClick={handleClose}
-                        >
-                            Cancel
-                        </button>
-
-                        <button type="submit" className="button button--primary">
-                            {tripToEdit ? "Save changes" : "Create trip"}
-                        </button>
-                    </div>
-                </form>
+                    <button
+                        type="submit"
+                        form="create-trip-form"
+                        className="button button--primary"
+                        disabled={isSubmitting}
+                    >
+                        {tripToEdit ?
+                            !isSubmitting ? "Save changes" : "Saving..."
+                            : 
+                            !isSubmitting ? "Create trip" : "Creating..."
+                        }
+                    </button>
+                </div>
+                
             </section>
         </div>
     )

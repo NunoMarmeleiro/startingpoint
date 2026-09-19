@@ -5,4 +5,5 @@ public sealed record TripResponseDTO(
     string Name,
     string Destination,
     DateOnly StartDate,
-    DateOnly EndDate);
+    DateOnly EndDate,
+    IReadOnlyCollection<PointOfInterestResponseDTO> PointsOfInterest);

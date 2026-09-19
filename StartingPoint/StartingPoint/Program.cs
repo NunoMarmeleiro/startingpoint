@@ -4,12 +4,18 @@ using StartingPoint.Trip.Application.Repositories;
 using StartingPoint.Trip.Application.Services;
 using StartingPoint.Trip.Infrastructure.Persistence;
 using StartingPoint.Trip.Infrastructure.Persistence.Repositories;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter());
+    });
 
 builder.Services.AddDbContext<TripDbContext>(options =>
     options.UseInMemoryDatabase("StartingPoint"));

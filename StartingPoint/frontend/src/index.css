@@ -1,6 +1,8 @@
 @import "./styles/variables.css";
 @import "./styles/layout.css";
 @import "./styles/buttons.css";
+@import "./styles/modal.css";
+@import "./styles/card.css";
 
 * {
   box-sizing: border-box;
@@ -21,4 +23,31 @@ body {
 
   background-color: var(--color-background);
   color: var(--color-text);
+}
+
+.required {
+    color: var(--color-required);
+}
+
+/* Global scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
 }

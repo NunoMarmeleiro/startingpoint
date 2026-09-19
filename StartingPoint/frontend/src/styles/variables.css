@@ -10,6 +10,7 @@
     --color-text-muted: #667085;
 
     --color-border: #e4e7ec;
+    --color-required: #ff0000ff;
 
     /* Spacing */
     --spacing-xs: 0.25rem;

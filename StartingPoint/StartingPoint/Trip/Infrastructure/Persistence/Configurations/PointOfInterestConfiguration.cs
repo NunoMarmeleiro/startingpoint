@@ -9,7 +9,8 @@ public class PointOfInterestConfiguration : IEntityTypeConfiguration<PointOfInte
     public void Configure(EntityTypeBuilder<PointOfInterest> builder) 
     {
         builder.HasKey(poi => poi.Id);
-
+        builder.Property(poi => poi.Id).ValueGeneratedNever();
+        
         builder.Property(poi => poi.Name)
             .IsRequired()
             .HasMaxLength(200);
