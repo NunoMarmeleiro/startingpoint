@@ -1,10 +1,12 @@
 import { useState } from "react"
 import * as React from "react"
 import { addPointOfInterest } from "../../services/tripService"
-import type {
-    AddPointOfInterestRequest,
-    POICategory,
+import {
+    type AddPointOfInterestRequest,
+    type POICategory, 
+    poiCategoryLabels
 } from "../../models/PointOfInterest"
+
 
 type AddPOIModalProps = {
     tripId: string
@@ -25,18 +27,7 @@ const categories: POICategory[] = [
     "Other",
 ]
 
-const categoryLabels: Record<POICategory, string> = {
-    Attraction: "Attraction",
-    Museum: "Museum",
-    HistoricalSite: "Historical Site",
-    Restaurant: "Restaurant",
-    Cafe: "Café",
-    Bar: "Bar",
-    Park: "Park",
-    Shopping: "Shopping",
-    Accommodation: "Accommodation",
-    Other: "Other",
-}
+
 
 function AddPOIModal({
     tripId,
@@ -178,7 +169,7 @@ function AddPOIModal({
                             >
                                 {categories.map((item) => (
                                     <option key={item} value={item}>
-                                        {categoryLabels[item]}
+                                        {poiCategoryLabels[item]}
                                     </option>
                                 ))}
                             </select>

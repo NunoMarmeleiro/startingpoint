@@ -14,6 +14,10 @@ public sealed class PointOfInterest
 
     public string? Notes { get; private set; }
 
+    private PointOfInterest()
+    {
+        
+    }
     private PointOfInterest(
         Guid id,
         string name,

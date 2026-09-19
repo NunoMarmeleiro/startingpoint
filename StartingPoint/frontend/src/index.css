@@ -2,6 +2,7 @@
 @import "./styles/layout.css";
 @import "./styles/buttons.css";
 @import "./styles/modal.css";
+@import "./styles/card.css";
 
 * {
   box-sizing: border-box;
@@ -22,6 +23,10 @@ body {
 
   background-color: var(--color-background);
   color: var(--color-text);
+}
+
+.required {
+    color: var(--color-required);
 }
 
 /* Global scrollbar */

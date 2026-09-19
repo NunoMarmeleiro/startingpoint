@@ -5,6 +5,7 @@ import type { Trip } from "../../models/Trip"
 import CreateTripModal from "../../components/trips/CreateTripModal"
 import "./TripDetailsPage.css"
 import AddPOIModal from "../../components/pois/AddPOIModal"
+import POICard from "../../components/pois/POICard"
 
 function TripDetailsPage() {
     const { id } = useParams<{ id: string }>()
@@ -85,14 +86,33 @@ function TripDetailsPage() {
                     </button>
                 </div>
 
-                <div className="trip-details__empty">
+                {trip.pointsOfInterest.length === 0 ? (
+                <div className="pois-list__empty">
                     <h3>No places added yet</h3>
-
                     <p>
-                        Add your first point of interest to start
-                        building your trip.
+                        You don't have any place yet. Add your first 
+                        point of interest to start building your trip.
                     </p>
+
+                    <button
+                        className="button button--primary"
+                        onClick={() => setIsAddPOIModalOpen(true)}
+                    >
+                        Add your first place
+                    </button>
                 </div>
+                    
+                    
+                ) : (
+                    <div className="poi-list__grid">
+                        {trip.pointsOfInterest.map((poi) => (
+                            <POICard
+                                key={poi.id}
+                                poi={poi}
+                            />
+                        ))}
+                    </div>
+                )}
             </section>
 
             {isEditModalOpen && trip && (

@@ -60,13 +60,11 @@ public class Trip
     public void AddPointOfInterest(PointOfInterest pointOfInterest)
     {
         ArgumentNullException.ThrowIfNull(pointOfInterest);
-
         if (_pointsOfInterest.Any(p => p.Id == pointOfInterest.Id))
         {
             throw new InvalidOperationException(
                 "The point of interest is already part of this trip.");
         }
-
         _pointsOfInterest.Add(pointOfInterest);
     }
 

@@ -10,6 +10,19 @@ export type POICategory =
     | "Accommodation"
     | "Other"
 
+export const poiCategoryLabels: Record<POICategory, string> = {
+    Attraction: "Attraction",
+    Museum: "Museum",
+    HistoricalSite: "Historical Site",
+    Restaurant: "Restaurant",
+    Cafe: "Café",
+    Bar: "Bar",
+    Park: "Park",
+    Shopping: "Shopping",
+    Accommodation: "Accommodation",
+    Other: "Other",
+}
+
 export type PointOfInterest = {
     id: string
     name: string

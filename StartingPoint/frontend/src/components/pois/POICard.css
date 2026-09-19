@@ -1,0 +1,26 @@
+.poi-card__category {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background-color: rgb(37 99 235 / 10%);
+    border-radius: 999px;
+}
+
+.poi-card__description {
+    margin: var(--spacing-md) 0 0;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.poi-card__address,
+.poi-card__notes {
+    margin: var(--spacing-sm) 0 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.poi-card__notes {
+    font-style: italic;
+}
