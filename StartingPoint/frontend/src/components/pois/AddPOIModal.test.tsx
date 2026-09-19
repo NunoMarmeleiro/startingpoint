@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 import AddPOIModal from "./AddPOIModal"
@@ -104,6 +104,13 @@ describe("AddPOIModal", () => {
         )
 
         expect(onAdded).toHaveBeenCalled()
+        const modal = screen.getByRole("heading", {
+            name: "Add point of interest",
+        }).closest("section")
+
+        expect(modal).toBeInTheDocument()
+
+        fireEvent.animationEnd(modal!)
         expect(onClose).toHaveBeenCalled()
     })
 
