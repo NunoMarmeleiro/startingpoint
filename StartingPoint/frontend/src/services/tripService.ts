@@ -54,3 +54,14 @@ export async function addPointOfInterest(
         request
     )
 }
+
+export async function updatePointOfInterest(
+    tripId: string,
+    pointOfInterestId: string,
+    request: AddPointOfInterestRequest
+): Promise<void> {
+    await apiClient.put(
+        `/api/trips/${tripId}/points-of-interest/${pointOfInterestId}`,
+        request
+    )
+}

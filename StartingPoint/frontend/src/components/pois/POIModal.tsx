@@ -1,16 +1,18 @@
 import { useState } from "react"
 import * as React from "react"
-import { addPointOfInterest } from "../../services/tripService"
+import {addPointOfInterest, updatePointOfInterest} from "../../services/tripService"
 import {
     type AddPointOfInterestRequest,
-    type POICategory, 
-    poiCategoryLabels
+    type POICategory,
+    poiCategoryLabels, 
+    type PointOfInterest
 } from "../../models/PointOfInterest"
 
 
-type AddPOIModalProps = {
+type POIModalProps = {
     tripId: string
-    onAdded?: () => void
+    poiToEdit?: PointOfInterest | null
+    onSaved?: () => void
     onClose: () => void
 }
 
@@ -29,17 +31,21 @@ const categories: POICategory[] = [
 
 
 
-function AddPOIModal({
-    tripId,
-    onAdded,
-    onClose,
-}: AddPOIModalProps) {
-    const [name, setName] = useState("")
+function POIModal({
+  tripId,
+  poiToEdit,
+  onSaved,
+  onClose,
+}: POIModalProps) {
+    const [name, setName] = useState(poiToEdit?.name ?? "")
     const [category, setCategory] =
-        useState<POICategory>("Attraction")
-    const [description, setDescription] = useState("")
-    const [address, setAddress] = useState("")
-    const [notes, setNotes] = useState("")
+        useState<POICategory>(poiToEdit?.category ?? "Attraction")
+    const [description, setDescription] =
+        useState(poiToEdit?.description ?? "")
+    const [address, setAddress] =
+        useState(poiToEdit?.address ?? "")
+    const [notes, setNotes] =
+        useState(poiToEdit?.notes ?? "")
     const [error, setError] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isClosing, setIsClosing] = useState(false)
@@ -58,6 +64,7 @@ function AddPOIModal({
         event: React.SyntheticEvent<HTMLFormElement>
     ) {
         event.preventDefault()
+
         if (!name.trim()) {
             setError("Name is required.")
             return
@@ -73,15 +80,29 @@ function AddPOIModal({
             address: address || undefined,
             notes: notes || undefined,
         }
-
+        
         try {
-            await addPointOfInterest(tripId, request)
+            if (!!poiToEdit) {
+                await updatePointOfInterest(
+                    tripId,
+                    poiToEdit.id,
+                    request
+                )
+            } else {
+                
+                await addPointOfInterest(
+                    tripId, 
+                    request
+                )
+            }
 
-            onAdded?.()
+            onSaved?.()
             handleClose()
         } catch {
             setError(
-                "Something went wrong while adding the point of interest. Please try again."
+                !!poiToEdit
+                    ? "Something went wrong while updating the point of interest. Please try again."
+                    : "Something went wrong while adding the point of interest. Please try again."
             )
         } finally {
             setIsSubmitting(false)
@@ -107,7 +128,11 @@ function AddPOIModal({
             >
                 <header className="modal__header">
                     <div>
-                        <h2>Add point of interest</h2>
+                        <h2>
+                            {!!poiToEdit
+                                ? "Edit point of interest"
+                                : "Add point of interest"}
+                        </h2>
                         <p>
                             Add a place you want to visit during your trip.
                         </p>
@@ -133,7 +158,7 @@ function AddPOIModal({
                 )}
                 <div className="modal__content">
                     <form
-                        id="add-poi-form"
+                        id="poi-form"
                         className="modal__form"
                         onSubmit={handleSubmit}
                     >
@@ -231,15 +256,17 @@ function AddPOIModal({
 
                     <button
                         type="submit"
-                        form="add-poi-form"
+                        form="poi-form"
                         className="button button--primary"
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ?
-                            "Adding..."
-                            :
-                            "Add POI"
-                        }
+                        {isSubmitting
+                            ? !!poiToEdit
+                                ? "Saving..."
+                                : "Adding..."
+                            : !!poiToEdit
+                                ? "Save changes"
+                                : "Add POI"}
                     </button>
                 </div>
             </section>
@@ -247,4 +274,4 @@ function AddPOIModal({
     )
 }
 
-export default AddPOIModal
+export default POIModal

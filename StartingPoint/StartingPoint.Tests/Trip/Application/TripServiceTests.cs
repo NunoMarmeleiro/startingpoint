@@ -375,4 +375,103 @@ public class TripServiceTests
                 It.IsAny<StartingPoint.Trip.Domain.Trip>()),
             Times.Never);
     }
+    
+    [Fact]
+    public async Task UpdatePointOfInterest_ShouldUpdatePointOfInterest()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        var poi = PointOfInterest.Create(
+            "Old Name",
+            POICategory.Attraction,
+            "Old description",
+            "Old address",
+            "Old notes");
+
+        trip.AddPointOfInterest(poi);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        await _tripService.UpdatePointOfInterest(
+            trip.Id,
+            poi.Id,
+            "Sagrada Família",
+            POICategory.HistoricalSite,
+            "Famous basilica",
+            "Barcelona",
+            "Visit in the morning");
+
+        Assert.Equal("Sagrada Família", poi.Name);
+        Assert.Equal(POICategory.HistoricalSite, poi.Category);
+        Assert.Equal("Famous basilica", poi.Description);
+        Assert.Equal("Barcelona", poi.Address);
+        Assert.Equal("Visit in the morning", poi.Notes);
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(trip),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task UpdatePointOfInterest_ShouldThrowNotFoundException_WhenTripDoesNotExist()
+    {
+        var tripId = Guid.NewGuid();
+        var poiId = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(tripId))
+            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.UpdatePointOfInterest(
+                tripId,
+                poiId,
+                "Sagrada Família",
+                POICategory.HistoricalSite));
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
+    
+    [Fact]
+    public async Task UpdatePointOfInterest_ShouldThrowNotFoundException_WhenPointOfInterestDoesNotExist()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        var poiId = Guid.NewGuid();
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.UpdatePointOfInterest(
+                trip.Id,
+                poiId,
+                "Sagrada Família",
+                POICategory.HistoricalSite));
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
 }
