@@ -81,7 +81,7 @@ function TripModal({
             handleClose()
         } catch {
             setError(
-                !!tripToEdit
+                tripToEdit
                     ? "Something went wrong while updating the trip. Please try again."
                     : "Something went wrong while creating the trip. Please try again."
             )
@@ -110,7 +110,7 @@ function TripModal({
                 <header className="modal__header">
                     <div>
                         <h2>
-                            {!!tripToEdit ? "Edit trip" : "Create trip"}
+                            {tripToEdit ? "Edit trip" : "Create trip"}
                         </h2>
 
                         <p>Plan your next adventure.</p>
@@ -234,7 +234,7 @@ function TripModal({
                         className="button button--primary"
                         disabled={isSubmitting}
                     >
-                        {!!tripToEdit ?
+                        {tripToEdit ?
                             !isSubmitting ? "Save changes" : "Saving..."
                             : 
                             !isSubmitting ? "Create trip" : "Creating..."

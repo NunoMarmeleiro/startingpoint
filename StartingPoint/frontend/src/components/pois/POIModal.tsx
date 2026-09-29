@@ -82,7 +82,7 @@ function POIModal({
         }
         
         try {
-            if (!!poiToEdit) {
+            if (poiToEdit) {
                 await updatePointOfInterest(
                     tripId,
                     poiToEdit.id,
@@ -100,7 +100,7 @@ function POIModal({
             handleClose()
         } catch {
             setError(
-                !!poiToEdit
+                poiToEdit
                     ? "Something went wrong while updating the point of interest. Please try again."
                     : "Something went wrong while adding the point of interest. Please try again."
             )
@@ -129,7 +129,7 @@ function POIModal({
                 <header className="modal__header">
                     <div>
                         <h2>
-                            {!!poiToEdit
+                            {poiToEdit
                                 ? "Edit point of interest"
                                 : "Add point of interest"}
                         </h2>
@@ -261,10 +261,10 @@ function POIModal({
                         disabled={isSubmitting}
                     >
                         {isSubmitting
-                            ? !!poiToEdit
+                            ? poiToEdit
                                 ? "Saving..."
                                 : "Adding..."
-                            : !!poiToEdit
+                            : poiToEdit
                                 ? "Save changes"
                                 : "Add POI"}
                     </button>
