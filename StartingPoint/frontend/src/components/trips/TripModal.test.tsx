@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
-import CreateTripModal from "./CreateTripModal"
+import TripModal from "./TripModal"
 import type { Trip } from "../../models/Trip"
 
 vi.mock("../../services/tripService", () => ({
@@ -21,7 +21,7 @@ describe("CreateTripModal", () => {
         }
 
         render(
-            <CreateTripModal
+            <TripModal
                 tripToEdit={trip}
                 onClose={vi.fn()}
             />
@@ -74,7 +74,7 @@ describe("CreateTripModal", () => {
         const onClose = vi.fn()
 
         render(
-            <CreateTripModal
+            <TripModal
                 tripToEdit={trip}
                 onClose={onClose}
                 onUpdated={onUpdated}
@@ -134,7 +134,7 @@ describe("CreateTripModal", () => {
         const onUpdated = vi.fn()
 
         render(
-            <CreateTripModal
+            <TripModal
                 tripToEdit={trip}
                 onClose={vi.fn()}
                 onUpdated={onUpdated}
@@ -183,7 +183,7 @@ describe("CreateTripModal", () => {
         updateTripMock.mockRejectedValue(new Error("API error"))
 
         render(
-            <CreateTripModal
+            <TripModal
                 tripToEdit={trip}
                 onClose={vi.fn()}
             />

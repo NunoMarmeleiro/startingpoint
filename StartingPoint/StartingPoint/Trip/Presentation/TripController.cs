@@ -65,4 +65,22 @@ public class TripController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpPut("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]
+    public async Task<IActionResult> UpdatePointOfInterest(
+        Guid tripId,
+        Guid pointOfInterestId,
+        UpdatePointOfInterestRequestDTO request)
+    {
+        await _tripService.UpdatePointOfInterest(
+            tripId,
+            pointOfInterestId,
+            request.Name,
+            request.Category,
+            request.Description,
+            request.Address,
+            request.Notes);
+
+        return NoContent();
+    }
 }

@@ -10,7 +10,7 @@ type CreateTripModalProps = {
     tripToEdit?: Trip | null
 }
 
-function CreateTripModal({
+function TripModal({
                              onClose,
                              onCreated,
                              onUpdated,
@@ -247,4 +247,4 @@ function CreateTripModal({
     )
 }
 
-export default CreateTripModal
+export default TripModal

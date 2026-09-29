@@ -2,15 +2,18 @@ import { useEffect, useState } from "react"
 import {Link, useParams} from "react-router-dom"
 import { getTripById } from "../../services/tripService"
 import type { Trip } from "../../models/Trip"
-import CreateTripModal from "../../components/trips/CreateTripModal"
+import TripModal from "../../components/trips/TripModal"
 import "./TripDetailsPage.css"
-import AddPOIModal from "../../components/pois/AddPOIModal"
+import POIModal from "../../components/pois/POIModal"
 import POICard from "../../components/pois/POICard"
+import type {PointOfInterest} from "../../models/PointOfInterest.ts";
 
 function TripDetailsPage() {
     const { id } = useParams<{ id: string }>()
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isAddPOIModalOpen, setIsAddPOIModalOpen] = useState(false)
+    const [poiToEdit, setPoiToEdit] =
+        useState<PointOfInterest | null>()
     const [trip, setTrip] = useState<Trip | null>(null)
 
     useEffect(() => {
@@ -80,7 +83,10 @@ function TripDetailsPage() {
                     <button
                         type="button"
                         className="button button--primary"
-                        onClick={() => setIsAddPOIModalOpen(true)}
+                        onClick={() => {
+                            setPoiToEdit(null)
+                            setIsAddPOIModalOpen(true)
+                        }}
                     >
                         + Add POI
                     </button>
@@ -96,7 +102,10 @@ function TripDetailsPage() {
 
                     <button
                         className="button button--primary"
-                        onClick={() => setIsAddPOIModalOpen(true)}
+                        onClick={() => {
+                            setPoiToEdit(null)
+                            setIsAddPOIModalOpen(true)
+                        }}
                     >
                         Add your first place
                     </button>
@@ -109,6 +118,10 @@ function TripDetailsPage() {
                             <POICard
                                 key={poi.id}
                                 poi={poi}
+                                onEdit={(selectedPOI) => {
+                                    setPoiToEdit(selectedPOI)
+                                    setIsAddPOIModalOpen(true)
+                                }}
                             />
                         ))}
                     </div>
@@ -116,7 +129,7 @@ function TripDetailsPage() {
             </section>
 
             {isEditModalOpen && trip && (
-                <CreateTripModal
+                <TripModal
                     tripToEdit={trip}
                     onClose={() => setIsEditModalOpen(false)}
                     onUpdated={(updatedTrip) => {
@@ -126,10 +139,14 @@ function TripDetailsPage() {
             )}
 
             {isAddPOIModalOpen && trip && (
-                <AddPOIModal
+                <POIModal
                     tripId={trip.id}
-                    onClose={() => setIsAddPOIModalOpen(false)}
-                    onAdded={async () => {
+                    poiToEdit={poiToEdit}
+                    onClose={() => {
+                        setIsAddPOIModalOpen(false)
+                        setPoiToEdit(null)
+                    }}
+                    onSaved={async () => {
                         const updatedTrip = await getTripById(trip.id)
                         setTrip(updatedTrip)
                     }}

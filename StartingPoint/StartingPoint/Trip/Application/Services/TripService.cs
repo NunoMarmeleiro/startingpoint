@@ -158,4 +158,42 @@ public class TripService
                     poi.Notes))
                 .ToList());
     }
+    
+    public async Task UpdatePointOfInterest(
+        Guid tripId,
+        Guid pointOfInterestId,
+        string name,
+        POICategory category,
+        string? description = null,
+        string? address = null,
+        string? notes = null)
+    {
+        var trip = await _repository.GetByIdAsync(tripId);
+
+        if (trip is null)
+        {
+            throw new EntityNotFoundException(
+                nameof(Trip),
+                tripId);
+        }
+
+        var pointOfInterest = trip.PointsOfInterest
+            .SingleOrDefault(p => p.Id == pointOfInterestId);
+
+        if (pointOfInterest is null)
+        {
+            throw new EntityNotFoundException(
+                nameof(PointOfInterest),
+                pointOfInterestId);
+        }
+
+        pointOfInterest.Update(
+            name,
+            category,
+            description,
+            address,
+            notes);
+
+        await _repository.UpdateAsync(trip);
+    }
 }

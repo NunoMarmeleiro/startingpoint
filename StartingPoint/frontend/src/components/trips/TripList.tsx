@@ -3,7 +3,7 @@ import type { Trip } from "../../models/Trip"
 import { getTrips } from "../../services/tripService"
 import TripCard from "./TripCard"
 import "./TripList.css"
-import CreateTripModal from "./CreateTripModal"
+import TripModal from "./TripModal"
 
 function TripList() {
     const [trips, setTrips] = useState<Trip[]>([])
@@ -67,7 +67,7 @@ function TripList() {
                 </div>
             )}
             {isCreateTripOpen && (
-                <CreateTripModal
+                <TripModal
                     onClose={() => setIsCreateTripOpen(false)}
                     onCreated={(trip) => {
                         setTrips((currentTrips) => [...currentTrips, trip])

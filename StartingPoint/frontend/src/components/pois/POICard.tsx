@@ -5,10 +5,11 @@ import {
 import "./POICard.css"
 
 type POICardProps = {
-    poi: PointOfInterest
+    poi: PointOfInterest,
+    onEdit: (poi: PointOfInterest) => void
 }
 
-function POICard({ poi }: POICardProps) {
+function POICard({ poi, onEdit }: POICardProps) {
     return (
         <article className="card poi-card">
             <div className="card__header">
@@ -37,6 +38,16 @@ function POICard({ poi }: POICardProps) {
                     {poi.notes}
                 </p>
             )}
+
+            <div className="poi-card__actions">
+                <button
+                    type="button"
+                    className="button button--secondary"
+                    onClick={() => onEdit(poi)}
+                >
+                    Edit
+                </button>
+            </div>
         </article>
     )
 }
