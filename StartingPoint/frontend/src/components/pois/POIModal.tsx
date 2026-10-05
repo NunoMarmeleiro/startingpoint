@@ -4,10 +4,10 @@ import {addPointOfInterest, updatePointOfInterest} from "../../services/tripServ
 import {
     type AddPointOfInterestRequest,
     type POICategory,
-    poiCategoryLabels, 
+    poiCategoryMetadata, 
     type PointOfInterest
 } from "../../models/PointOfInterest"
-
+import "./POIModal.css"
 
 type POIModalProps = {
     tripId: string
@@ -27,6 +27,7 @@ const categories: POICategory[] = [
     "Shopping",
     "Accommodation",
     "Other",
+    "Uncategorized",
 ]
 
 
@@ -39,7 +40,7 @@ function POIModal({
 }: POIModalProps) {
     const [name, setName] = useState(poiToEdit?.name ?? "")
     const [category, setCategory] =
-        useState<POICategory>(poiToEdit?.category ?? "Attraction")
+        useState<POICategory>(poiToEdit?.category ?? "Uncategorized")
     const [description, setDescription] =
         useState(poiToEdit?.description ?? "")
     const [address, setAddress] =
@@ -182,22 +183,33 @@ function POIModal({
                             <label htmlFor="poi-category">
                                 Category
                             </label>
-    
-                            <select
-                                id="poi-category"
-                                value={category}
-                                onChange={(event) =>
-                                    setCategory(
-                                        event.target.value as POICategory
-                                    )
-                                }
-                            >
-                                {categories.map((item) => (
-                                    <option key={item} value={item}>
-                                        {poiCategoryLabels[item]}
-                                    </option>
-                                ))}
-                            </select>
+
+                            <div className="poi-category-select">
+                                <span
+                                    className="poi-category-select__indicator"
+                                    style={{
+                                        backgroundColor:
+                                        poiCategoryMetadata[category].color,
+                                    }}
+                                    aria-hidden="true"
+                                />
+
+                                <select
+                                    id="poi-category"
+                                    value={category}
+                                    onChange={(event) =>
+                                        setCategory(
+                                            event.target.value as POICategory
+                                        )
+                                    }
+                                >
+                                    {categories.map((item) => (
+                                        <option key={item} value={item}>
+                                            {poiCategoryMetadata[item].label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
     
                         <div className="modal__field">

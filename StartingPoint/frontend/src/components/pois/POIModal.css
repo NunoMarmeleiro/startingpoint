@@ -1,0 +1,12 @@
+.poi-category-select {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.poi-category-select__indicator {
+    width: 0.75rem;
+    height: 0.75rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+}

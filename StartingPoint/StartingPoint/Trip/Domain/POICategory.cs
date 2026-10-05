@@ -11,5 +11,6 @@ public enum POICategory
     Park,
     Shopping,
     Accommodation,
-    Other
+    Other,
+    Uncategorized
 }
