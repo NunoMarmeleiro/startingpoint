@@ -9,18 +9,56 @@ export type POICategory =
     | "Shopping"
     | "Accommodation"
     | "Other"
+    | "Uncategorized"
 
-export const poiCategoryLabels: Record<POICategory, string> = {
-    Attraction: "Attraction",
-    Museum: "Museum",
-    HistoricalSite: "Historical Site",
-    Restaurant: "Restaurant",
-    Cafe: "Café",
-    Bar: "Bar",
-    Park: "Park",
-    Shopping: "Shopping",
-    Accommodation: "Accommodation",
-    Other: "Other",
+export const poiCategoryMetadata: Record<
+    POICategory,
+    { label: string; color: string }
+> = {
+    Attraction: {
+        label: "Attraction",
+        color: "#E76F51",
+    },
+    Museum: {
+        label: "Museum",
+        color: "#6C63FF",
+    },
+    HistoricalSite: {
+        label: "Historical Site",
+        color: "#8D6E63",
+    },
+    Restaurant: {
+        label: "Restaurant",
+        color: "#E9A23B",
+    },
+    Cafe: {
+        label: "Café",
+        color: "#A67C52",
+    },
+    Bar: {
+        label: "Bar",
+        color: "#9B5DE5",
+    },
+    Park: {
+        label: "Park",
+        color: "#4CAF50",
+    },
+    Shopping: {
+        label: "Shopping",
+        color: "#F15BB5",
+    },
+    Accommodation: {
+        label: "Accommodation",
+        color: "#219EBC",
+    },
+    Other: {
+        label: "Other",
+        color: "#6B7280",
+    },
+    Uncategorized: {
+        label: "Uncategorized",
+        color: "#9CA3AF",
+    },
 }
 
 export type PointOfInterest = {

@@ -1,8 +1,9 @@
 import { 
     type PointOfInterest,
-    poiCategoryLabels
+    poiCategoryMetadata
 } from "../../models/PointOfInterest"
 import "./POICard.css"
+import * as React from "react";
 
 type POICardProps = {
     poi: PointOfInterest,
@@ -16,8 +17,14 @@ function POICard({ poi, onEdit, onDelete }: POICardProps) {
             <div className="card__header">
                 <div>
                     <h3>{poi.name}</h3>
-                    <span className="poi-card__category">
-                        {poiCategoryLabels[poi.category]}
+                    <span
+                        className="poi-card__category"
+                        style={{
+                            "--color-poi-category":
+                            poiCategoryMetadata[poi.category].color,
+                        } as React.CSSProperties}
+                    >
+                        {poiCategoryMetadata[poi.category].label}
                     </span>
                 </div>
             </div>
