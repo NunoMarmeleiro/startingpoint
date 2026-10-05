@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from "vitest"
 import apiClient from "./apiClient"
-import { addPointOfInterest } from "./tripService"
+import { addPointOfInterest, deleteTrip, deletePointOfInterest } from "./tripService"
 
 vi.mock("./apiClient", () => ({
     default: {
         post: vi.fn(),
+        delete: vi.fn(),
     },
 }))
 
@@ -23,6 +24,31 @@ describe("addPointOfInterest", () => {
         expect(apiClient.post).toHaveBeenCalledWith(
             "/api/trips/trip-123/points-of-interest",
             request
+        )
+    })
+})
+
+describe("deleteTrip", () => {
+    it("deletes a trip", async () => {
+        const tripId = "trip-123"
+
+        await deleteTrip(tripId)
+
+        expect(apiClient.delete).toHaveBeenCalledWith(
+            `/api/trips/${tripId}`
+        )
+    })
+})
+
+describe("deletePOI", () => {
+    it("deletes a POI", async () => {
+        const tripId = "trip-123";
+        const poiId = "poi-123";
+
+        await deletePointOfInterest(tripId,poiId)
+
+        expect(apiClient.delete).toHaveBeenCalledWith(
+            `/api/trips/${tripId}/points-of-interest/${poiId}`
         )
     })
 })

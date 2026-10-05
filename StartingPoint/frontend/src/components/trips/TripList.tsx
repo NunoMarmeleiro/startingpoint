@@ -4,6 +4,7 @@ import { getTrips } from "../../services/tripService"
 import TripCard from "./TripCard"
 import "./TripList.css"
 import TripModal from "./TripModal"
+import { deleteTrip } from "../../services/tripService"
 
 function TripList() {
     const [trips, setTrips] = useState<Trip[]>([])
@@ -22,6 +23,25 @@ function TripList() {
 
         loadTrips()
     }, [])
+
+    async function handleDeleteTrip(trip: Trip) {
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${trip.name}"?`
+        )
+
+        if (!confirmed) {
+            return
+        }
+
+        await deleteTrip(trip.id)
+
+        // Remove the trip from the current list
+        setTrips((currentTrips) =>
+            currentTrips.filter(
+                (currentTrip) => currentTrip.id !== trip.id
+            )
+        )
+    }
 
     return (
         <section className="trip-list">
@@ -62,6 +82,7 @@ function TripList() {
                         <TripCard
                             key={trip.id}
                             trip={trip}
+                            onDelete={handleDeleteTrip}
                         />
                     ))}
                 </div>

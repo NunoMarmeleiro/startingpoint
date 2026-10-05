@@ -83,4 +83,24 @@ public class TripController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpDelete("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]
+    public async Task<IActionResult> DeletePointOfInterest(
+        Guid tripId,
+        Guid pointOfInterestId)
+    {
+        await _tripService.DeletePointOfInterest(
+            tripId,
+            pointOfInterestId);
+
+        return NoContent();
+    }
+    
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteTrip(Guid id)
+    {
+        await _tripService.DeleteTrip(id);
+
+        return NoContent();
+    }
 }

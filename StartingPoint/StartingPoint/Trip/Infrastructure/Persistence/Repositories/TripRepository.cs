@@ -29,4 +29,10 @@ public class TripRepository(TripDbContext dbContext) : ITripRepository
             .Include(trip => trip.PointsOfInterest)
             .ToListAsync();
     }
+
+    public async Task DeleteAsync(Domain.Trip trip)
+    {
+        dbContext.Trips.Remove(trip);
+        await dbContext.SaveChangesAsync();
+    }
 }

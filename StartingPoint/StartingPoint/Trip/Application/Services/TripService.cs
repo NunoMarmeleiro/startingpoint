@@ -196,4 +196,46 @@ public class TripService
 
         await _repository.UpdateAsync(trip);
     }
+    
+    public async Task DeletePointOfInterest(
+        Guid tripId,
+        Guid pointOfInterestId)
+    {
+        var trip = await _repository.GetByIdAsync(tripId);
+
+        if (trip is null)
+        {
+            throw new EntityNotFoundException(
+                nameof(Trip),
+                tripId);
+        }
+
+        var pointOfInterest = trip.PointsOfInterest
+            .SingleOrDefault(p => p.Id == pointOfInterestId);
+
+        if (pointOfInterest is null)
+        {
+            throw new EntityNotFoundException(
+               nameof(PointOfInterest),
+               pointOfInterestId);
+        }
+        
+        trip.RemovePointOfInterest(pointOfInterestId);
+
+        await _repository.UpdateAsync(trip);
+    }
+    
+    public async Task DeleteTrip(Guid id)
+    {
+        var trip = await _repository.GetByIdAsync(id);
+
+        if (trip is null)
+        {
+            throw new EntityNotFoundException(
+                nameof(Trip),
+                id);
+        }
+
+        await _repository.DeleteAsync(trip);
+    }
 }

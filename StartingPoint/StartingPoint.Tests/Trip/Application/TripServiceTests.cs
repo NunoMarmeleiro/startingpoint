@@ -474,4 +474,128 @@ public class TripServiceTests
                 It.IsAny<StartingPoint.Trip.Domain.Trip>()),
             Times.Never);
     }
+    
+    [Fact]
+    public async Task DeletePointOfInterest_ShouldRemovePointOfInterest()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        var poi = PointOfInterest.Create(
+            "Sagrada Família",
+            POICategory.Attraction);
+
+        trip.AddPointOfInterest(poi);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        await _tripService.DeletePointOfInterest(
+            trip.Id,
+            poi.Id);
+
+        Assert.Empty(trip.PointsOfInterest);
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(trip),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task DeletePointOfInterest_ShouldThrowNotFoundException_WhenTripDoesNotExist()
+    {
+        var tripId = Guid.NewGuid();
+        var poiId = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(tripId))
+            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.DeletePointOfInterest(
+                tripId,
+                poiId));
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
+    
+    [Fact]
+    public async Task DeletePointOfInterest_ShouldThrowNotFoundException_WhenPointOfInterestDoesNotExist()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        var poiId = Guid.NewGuid();
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.DeletePointOfInterest(
+                trip.Id,
+                poiId));
+
+        _repositoryMock.Verify(
+            repository => repository.UpdateAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
+    
+    [Fact]
+    public async Task DeleteTrip_ShouldDeleteTrip()
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        var trip = StartingPoint.Trip.Domain.Trip.Create(
+            "Barcelona Trip",
+            "Barcelona",
+            dateRange);
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(trip.Id))
+            .ReturnsAsync(trip);
+
+        await _tripService.DeleteTrip(trip.Id);
+
+        _repositoryMock.Verify(
+            repository => repository.DeleteAsync(trip),
+            Times.Once);
+    }
+    
+    [Fact]
+    public async Task DeleteTrip_ShouldThrowNotFoundException_WhenTripDoesNotExist()
+    {
+        var tripId = Guid.NewGuid();
+
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAsync(tripId))
+            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.DeleteTrip(tripId));
+
+        _repositoryMock.Verify(
+            repository => repository.DeleteAsync(
+                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+            Times.Never);
+    }
 }
