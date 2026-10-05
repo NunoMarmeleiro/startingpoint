@@ -6,4 +6,5 @@ public interface ITripRepository
     Task<Domain.Trip?> GetByIdAsync(Guid id);
     Task UpdateAsync(Domain.Trip trip);
     Task<IEnumerable<Domain.Trip>> GetAllAsync();
+    Task DeleteAsync(Domain.Trip trip);
 }

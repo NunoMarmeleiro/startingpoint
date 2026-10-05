@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import {useEffect, useState} from "react"
 import {Link, useParams} from "react-router-dom"
-import { getTripById } from "../../services/tripService"
-import type { Trip } from "../../models/Trip"
+import {deletePointOfInterest, getTripById} from "../../services/tripService"
+import type {Trip} from "../../models/Trip"
 import TripModal from "../../components/trips/TripModal"
 import "./TripDetailsPage.css"
 import POIModal from "../../components/pois/POIModal"
@@ -29,6 +29,27 @@ function TripDetailsPage() {
 
         loadTrip()
     }, [id])
+
+    async function handleDeletePOI(poi: PointOfInterest) {
+        if (!id) {
+            return
+        }
+        
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${poi.name}"?`
+        )
+
+        if (!confirmed) {
+            return
+        }
+        await deletePointOfInterest(
+            id,
+            poi.id
+        )
+
+        const updatedTrip = await getTripById(id)
+        setTrip(updatedTrip)
+    }
 
     if (!trip) {
         return (
@@ -122,6 +143,7 @@ function TripDetailsPage() {
                                     setPoiToEdit(selectedPOI)
                                     setIsAddPOIModalOpen(true)
                                 }}
+                                onDelete={handleDeletePOI}
                             />
                         ))}
                     </div>

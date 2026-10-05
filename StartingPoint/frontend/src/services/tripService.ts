@@ -65,3 +65,18 @@ export async function updatePointOfInterest(
         request
     )
 }
+
+export async function deletePointOfInterest(
+    tripId: string,
+    pointOfInterestId: string
+): Promise<void> {
+    await apiClient.delete(
+        `/api/trips/${tripId}/points-of-interest/${pointOfInterestId}`
+    )
+}
+
+export async function deleteTrip(
+    tripId: string
+): Promise<void> {
+    await apiClient.delete(`/api/trips/${tripId}`)
+}

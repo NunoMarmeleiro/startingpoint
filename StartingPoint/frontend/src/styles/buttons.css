@@ -36,3 +36,13 @@
 .button--secondary:hover {
     background-color: var(--color-background);
 }
+
+.button--danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.button--danger:hover {
+    color: white;
+    background-color: var(--color-danger);
+}
