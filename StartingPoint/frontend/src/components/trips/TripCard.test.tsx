@@ -14,10 +14,10 @@ describe("TripCard", () => {
             endDate: "2026-10-05",
             pointsOfInterest: [],
         }
-
+        const onDelete = vi.fn()
         render(
             <MemoryRouter>
-                <TripCard trip={trip} />
+                <TripCard trip={trip} onDelete={onDelete} />
             </MemoryRouter>
         )
 
@@ -44,9 +44,10 @@ describe("TripCard", () => {
             pointsOfInterest: [],
         }
 
+        const onDelete = vi.fn()
         render(
             <MemoryRouter>
-                <TripCard trip={trip} />
+                <TripCard trip={trip} onDelete={onDelete} />
             </MemoryRouter>
         )
 
