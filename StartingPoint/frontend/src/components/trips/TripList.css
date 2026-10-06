@@ -49,13 +49,6 @@
     color: var(--color-text-muted);
 }
 
-.trip-card__dates {
-    margin: var(--spacing-md) 0 0;
-
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-}
-
 .trip-list__loading {
     display: flex;
     align-items: center;

@@ -28,13 +28,13 @@ function POICard({ poi, onEdit, onDelete }: POICardProps) {
                     </span>
                 </div>
             </div>
-
+            <div className="poi-card__content">
             {poi.description && (
                 <p className="poi-card__description">
                     {poi.description}
                 </p>
             )}
-
+            
             {poi.address && (
                 <p className="poi-card__address">
                     {poi.address}
@@ -46,8 +46,8 @@ function POICard({ poi, onEdit, onDelete }: POICardProps) {
                     {poi.notes}
                 </p>
             )}
-
-            <div className="poi-card__actions">
+            </div>
+            <div className="card__actions">
                 <button
                     type="button"
                     className="button button--secondary"

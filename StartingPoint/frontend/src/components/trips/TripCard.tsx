@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import type { Trip } from "../../models/Trip"
 import "./TripCard.css"
 
@@ -11,30 +11,45 @@ function TripCard({
                       trip,
                       onDelete,
                   }: TripCardProps) {
+    const navigate = useNavigate();
+    
     return (
-        <Link to={`/trips/${trip.id}`} className="card trip-card">
-            <h2 className="trip-card__name">{trip.name}</h2>
+        <article className="card trip-card">
+            <h2 className="card__header trip-card__header">{trip.name}</h2>
 
-            <p className="trip-card__destination">
-                {trip.destination}
-            </p>
-
-            <p className="trip-card__dates">
-                {trip.startDate} → {trip.endDate}
-            </p>
-
-            <button
-                type="button"
-                className="button button--danger"
-                onClick={(event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    onDelete(trip)
-                }}
-            >
-                Delete
-            </button>
-        </Link>
+            <div className="trip-card__content">
+                <p className="trip-card__destination">
+                    {trip.destination}
+                </p>
+    
+                <p className="trip-card__dates">
+                    {trip.startDate} → {trip.endDate}
+                </p>
+            </div>
+            <div className="card__actions">
+                <button
+                    type="button"
+                    className="button button--secondary"
+                    onClick={() => navigate(`/trips/${trip.id}`)}
+                >
+                    Edit
+                </button>
+                
+                
+                <button
+                    type="button"
+                    className="button button--danger"
+                    onClick={(event) => {
+                        event.preventDefault()
+                        event.stopPropagation()
+                        onDelete(trip)
+                    }}
+                >
+                    Delete
+                </button>
+            </div>
+            
+        </article>
     
     )
 }

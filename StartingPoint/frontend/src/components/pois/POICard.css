@@ -1,3 +1,13 @@
+.poi-card {
+    display: flex;
+    flex-direction: column;
+    height: 18rem;
+}
+
+.poi-card .card__header {
+    flex-shrink: 0;
+}
+
 .poi-card__category {
     display: inline-flex;
     align-items: center;
@@ -43,4 +53,11 @@
 
 .poi-card__notes {
     font-style: italic;
+}
+
+.poi-card__content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--spacing-sm) 0;
 }
