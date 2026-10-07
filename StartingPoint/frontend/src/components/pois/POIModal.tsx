@@ -52,6 +52,7 @@ function POIModal({
     const [isClosing, setIsClosing] = useState(false)
 
     function handleClose() {
+        if (isSubmitting) return
         setIsClosing(true)
     }
 
@@ -144,6 +145,7 @@ function POIModal({
                         className="modal__close"
                         onClick={handleClose}
                         aria-label="Close"
+                        disabled={isSubmitting}
                     >
                         ×
                     </button>
@@ -272,12 +274,14 @@ function POIModal({
                         className="button button--primary"
                         disabled={isSubmitting}
                     >
-                        {isSubmitting
-                            ? poiToEdit
+                        {isSubmitting && <span className="small-loader"></span>}
+                        
+                        {poiToEdit
+                            ? isSubmitting
                                 ? "Saving..."
-                                : "Adding..."
-                            : poiToEdit
-                                ? "Save changes"
+                                : "Save Changes"
+                            : isSubmitting
+                                ? "Adding..."
                                 : "Add POI"}
                     </button>
                 </div>

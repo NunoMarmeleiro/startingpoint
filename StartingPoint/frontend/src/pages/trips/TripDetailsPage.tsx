@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import {Link, useParams} from "react-router-dom"
+import {Link, useNavigate, useParams} from "react-router-dom"
 import {deletePointOfInterest, getTripById} from "../../services/tripService"
 import type {Trip} from "../../models/Trip"
 import TripModal from "../../components/trips/TripModal"
@@ -9,22 +9,30 @@ import POICard from "../../components/pois/POICard"
 import type {PointOfInterest} from "../../models/PointOfInterest.ts";
 
 function TripDetailsPage() {
+    const navigate = useNavigate();
     const { id } = useParams<{ id: string }>()
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [isAddPOIModalOpen, setIsAddPOIModalOpen] = useState(false)
     const [poiToEdit, setPoiToEdit] =
         useState<PointOfInterest | null>()
     const [trip, setTrip] = useState<Trip | null>(null)
-
+    const [isLoading, setIsLoading] = useState(true)
+    
+    
+    
     useEffect(() => {
         if (!id) {
             return
         }
-
         const tripId = id
         async function loadTrip() {
-            const data = await getTripById(tripId)
-            setTrip(data)
+            try {
+                const data = await getTripById(tripId)
+                setTrip(data)
+            } finally {
+                setIsLoading(false);
+            }
+            
         }
 
         loadTrip()
@@ -51,130 +59,146 @@ function TripDetailsPage() {
         setTrip(updatedTrip)
     }
 
-    if (!trip) {
-        return (
-            <main className="page">
-                <p>Loading trip...</p>
-            </main>
-        )
-    }
 
     return (
-        <section className="trip-details">
-            <header className="trip-details__header">
-                <div>
-                    <Link
-                        to="/"
-                        className="trip-details__back"
-                    >
-                        ← Back to trips
-                    </Link>
+        <main>
+            <Link
+                to="/"
+                className="trip-details__back"
+            >
+                ← Back to trips
+            </Link>
 
-                    <h1 className="trip-details__name">
-                        {trip.name}
-                    </h1>
-
-                    <p className="trip-details__destination">
-                        {trip.destination}
-                    </p>
-
-                    <p className="trip-details__dates">
-                        {trip.startDate} → {trip.endDate}
-                    </p>
+            {isLoading ? (
+                <div className="trip-details__loading">
+                    <span className="big-loader"></span>
+                    <p>Loading trip...</p>
                 </div>
-
-                <button
-                    type="button"
-                    className="button button--secondary"
-                    onClick={() => setIsEditModalOpen(true)}
-                >
-                    Edit
-                </button>
-            </header>
-
-            <section className="trip-details__poi">
-                <div className="trip-details__section-header">
-                    <div>
-                        <h2>Points of interest</h2>
-                        <p>
-                            Places you want to visit during your trip.
-                        </p>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="button button--primary"
-                        onClick={() => {
-                            setPoiToEdit(null)
-                            setIsAddPOIModalOpen(true)
-                        }}
-                    >
-                        + Add POI
-                    </button>
-                </div>
-
-                {trip.pointsOfInterest.length === 0 ? (
-                <div className="poi-list__empty">
-                    <h3>No places added yet</h3>
+            ) : !trip ? (
+                <div className="trip-details__empty">
+                    <h2>Unable to load trip</h2>
                     <p>
-                        You don't have any place yet. Add your first 
-                        point of interest to start building your trip.
+                        We couldn't find this trip or something went wrong while
+                        loading it.
                     </p>
 
                     <button
+                        onClick={() => navigate("/")}
                         className="button button--primary"
-                        onClick={() => {
-                            setPoiToEdit(null)
-                            setIsAddPOIModalOpen(true)
-                        }}
                     >
-                        Add your first place
+                        Back to trips
                     </button>
                 </div>
-                    
-                    
-                ) : (
-                    <div className="poi-list__grid">
-                        {trip.pointsOfInterest.map((poi) => (
-                            <POICard
-                                key={poi.id}
-                                poi={poi}
-                                onEdit={(selectedPOI) => {
-                                    setPoiToEdit(selectedPOI)
+            ) : (
+                <section className="trip-details">
+                    <header className="trip-details__header">
+                        <div>
+                            <h1 className="trip-details__name">
+                                {trip.name}
+                            </h1>
+
+                            <p className="trip-details__destination">
+                                {trip.destination}
+                            </p>
+
+                            <p className="trip-details__dates">
+                                {trip.startDate} → {trip.endDate}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="button button--secondary"
+                            onClick={() => setIsEditModalOpen(true)}
+                        >
+                            Edit
+                        </button>
+                    </header>
+
+                    <section className="trip-details__poi">
+                        <div className="trip-details__section-header">
+                            <div>
+                                <h2>Points of interest</h2>
+                                <p>
+                                    Places you want to visit during your trip.
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="button button--primary"
+                                onClick={() => {
+                                    setPoiToEdit(null)
                                     setIsAddPOIModalOpen(true)
                                 }}
-                                onDelete={handleDeletePOI}
-                            />
-                        ))}
-                    </div>
-                )}
-            </section>
+                            >
+                                + Add POI
+                            </button>
+                        </div>
 
-            {isEditModalOpen && trip && (
-                <TripModal
-                    tripToEdit={trip}
-                    onClose={() => setIsEditModalOpen(false)}
-                    onUpdated={(updatedTrip) => {
-                        setTrip(updatedTrip)
-                    }}
-                />
-            )}
+                        {trip.pointsOfInterest.length === 0 ? (
+                            <div className="poi-list__empty">
+                                <h3>No places added yet</h3>
+                                <p>
+                                    You don't have any places yet. Add your first
+                                    point of interest to start building your trip.
+                                </p>
 
-            {isAddPOIModalOpen && trip && (
-                <POIModal
-                    tripId={trip.id}
-                    poiToEdit={poiToEdit}
-                    onClose={() => {
-                        setIsAddPOIModalOpen(false)
-                        setPoiToEdit(null)
-                    }}
-                    onSaved={async () => {
-                        const updatedTrip = await getTripById(trip.id)
-                        setTrip(updatedTrip)
-                    }}
-                />
+                                <button
+                                    type="button"
+                                    className="button button--primary"
+                                    onClick={() => {
+                                        setPoiToEdit(null)
+                                        setIsAddPOIModalOpen(true)
+                                    }}
+                                >
+                                    Add your first place
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="poi-list__grid">
+                                {trip.pointsOfInterest.map((poi) => (
+                                    <POICard
+                                        key={poi.id}
+                                        poi={poi}
+                                        onEdit={(selectedPOI) => {
+                                            setPoiToEdit(selectedPOI)
+                                            setIsAddPOIModalOpen(true)
+                                        }}
+                                        onDelete={handleDeletePOI}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </section>
+
+                    {isEditModalOpen && (
+                        <TripModal
+                            tripToEdit={trip}
+                            onClose={() => setIsEditModalOpen(false)}
+                            onUpdated={(updatedTrip) => {
+                                setTrip(updatedTrip)
+                            }}
+                        />
+                    )}
+
+                    {isAddPOIModalOpen && (
+                        <POIModal
+                            tripId={trip.id}
+                            poiToEdit={poiToEdit}
+                            onClose={() => {
+                                setIsAddPOIModalOpen(false)
+                                setPoiToEdit(null)
+                            }}
+                            onSaved={async () => {
+                                const updatedTrip = await getTripById(trip.id)
+                                setTrip(updatedTrip)
+                            }}
+                        />
+                    )}
+                </section>
             )}
-        </section>
+        </main>
     )
 }
 

@@ -3,6 +3,7 @@
 @import "./styles/buttons.css";
 @import "./styles/modal.css";
 @import "./styles/card.css";
+@import "./styles/loaders.css";
 
 * {
   box-sizing: border-box;
