@@ -74,7 +74,7 @@ describe("TripDetailsPage", () => {
 
         expect(
             await screen.findByText(
-                "You don't have any place yet. Add your first point of interest to start building your trip."
+                "You don't have any places yet. Add your first point of interest to start building your trip."
             )
         ).toBeInTheDocument()
     })
