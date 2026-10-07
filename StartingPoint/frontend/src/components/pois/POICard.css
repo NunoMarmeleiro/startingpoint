@@ -1,3 +1,17 @@
+.poi-card {
+    height: 18rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.poi-card__content {
+    overflow-y: auto;
+}
+
+.poi-card .card__header {
+    flex-shrink: 0;
+}
+
 .poi-card__category {
     display: inline-flex;
     align-items: center;
@@ -43,4 +57,19 @@
 
 .poi-card__notes {
     font-style: italic;
+}
+
+.poi-card__content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.poi-card__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: var(--spacing-sm);
 }

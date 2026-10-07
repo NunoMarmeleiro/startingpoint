@@ -1,9 +1,41 @@
-.trip-card__name {
-    margin: 0 0 var(--spacing-sm);
-    font-size: 1.25rem;
+.trip-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.trip-card .card__header {
+    flex-shrink: 0;
 }
 
 .trip-card__destination {
     margin: 0;
     color: var(--color-text-muted);
+}
+
+.trip-card__dates {
+    margin: var(--spacing-md) 0 0;
+
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.trip-card__header {
+    margin: 0 0 var(--spacing-sm);
+    font-size: 1.25rem;
+}
+
+.trip-card__content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--spacing-sm) 0;
+}
+
+.trip-card__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: var(--spacing-sm);
 }

@@ -92,7 +92,7 @@ function TripDetailsPage() {
                 </button>
             </header>
 
-            <section className="trip-details__pois">
+            <section className="trip-details__poi">
                 <div className="trip-details__section-header">
                     <div>
                         <h2>Points of interest</h2>
@@ -114,7 +114,7 @@ function TripDetailsPage() {
                 </div>
 
                 {trip.pointsOfInterest.length === 0 ? (
-                <div className="pois-list__empty">
+                <div className="poi-list__empty">
                     <h3>No places added yet</h3>
                     <p>
                         You don't have any place yet. Add your first 
