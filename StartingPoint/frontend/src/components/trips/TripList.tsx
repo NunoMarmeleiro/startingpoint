@@ -58,6 +58,7 @@ function TripList() {
 
             {isLoading ? (
                 <div className="trip-list__loading">
+                    <span className="big-loader"></span>
                     <p>Loading your trips...</p>
                 </div>
             ) : trips.length === 0 ? (

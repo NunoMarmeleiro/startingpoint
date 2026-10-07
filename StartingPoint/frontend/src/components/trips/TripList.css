@@ -53,7 +53,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+    flex-direction: column;
     min-height: 300px;
 
     color: var(--color-text-muted);
