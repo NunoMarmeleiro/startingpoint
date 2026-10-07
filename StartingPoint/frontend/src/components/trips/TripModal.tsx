@@ -34,6 +34,7 @@ function TripModal({
     const [error, setError] = useState("")
 
     function handleClose() {
+        if(isSubmitting) return
         setIsClosing(true)
     }
 
@@ -121,6 +122,7 @@ function TripModal({
                         className="modal__close"
                         onClick={handleClose}
                         aria-label="Close"
+                        disabled={isSubmitting}
                     >
                         ×
                     </button>
@@ -234,10 +236,15 @@ function TripModal({
                         className="button button--primary"
                         disabled={isSubmitting}
                     >
-                        {tripToEdit ?
-                            !isSubmitting ? "Save changes" : "Saving..."
-                            : 
-                            !isSubmitting ? "Create trip" : "Creating..."
+                        {isSubmitting && <span className="small-loader"></span>}
+
+                        {tripToEdit
+                            ? isSubmitting
+                                ? "Saving..."
+                                : "Save changes"
+                            : isSubmitting
+                                ? "Creating..."
+                                : "Create trip"
                         }
                     </button>
                 </div>

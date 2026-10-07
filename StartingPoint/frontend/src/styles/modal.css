@@ -107,7 +107,12 @@
     cursor: pointer;
 }
 
-.modal__close:hover {
+.modal__close:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal__close:not(:disabled):hover {
     color: var(--color-text);
 }
 
