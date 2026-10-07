@@ -40,7 +40,7 @@
     color: var(--color-text-muted);
 }
 
-.trip-details__pois {
+.trip-details__poi {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
@@ -48,7 +48,11 @@
 
 .poi-list__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(260px, 1fr)
+    );
+    align-items: start;    
     gap: var(--spacing-lg);
 }
 
@@ -69,7 +73,7 @@
     color: var(--color-text-muted);
 }
 
-.pois-list__empty {
+.poi-list__empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -85,12 +89,12 @@
     border-radius: var(--radius-lg);
 }
 
-.pois-list__empty h2 {
+.poi-list__empty h2 {
     margin: 0 0 var(--spacing-sm);
     font-size: 1.5rem;
 }
 
-.pois-list__empty p {
+.poi-list__empty p {
     max-width: 500px;
     margin: 0 0 var(--spacing-lg);
     color: var(--color-text-muted);

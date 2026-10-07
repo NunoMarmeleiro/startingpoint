@@ -47,7 +47,7 @@ function POICard({ poi, onEdit, onDelete }: POICardProps) {
                 </p>
             )}
             </div>
-            <div className="card__actions">
+            <div className="poi-card__actions">
                 <button
                     type="button"
                     className="button button--secondary"

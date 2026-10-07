@@ -30,3 +30,12 @@
     overflow-y: auto;
     padding: var(--spacing-sm) 0;
 }
+
+.trip-card__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: var(--spacing-sm);
+}

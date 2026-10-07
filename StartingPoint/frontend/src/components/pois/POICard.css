@@ -1,7 +1,11 @@
 .poi-card {
+    height: 18rem;
     display: flex;
     flex-direction: column;
-    max-height: 18rem;
+}
+
+.poi-card__content {
+    overflow-y: auto;
 }
 
 .poi-card .card__header {
@@ -59,5 +63,13 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: var(--spacing-sm) 0;
+}
+
+.poi-card__actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: var(--spacing-sm);
 }

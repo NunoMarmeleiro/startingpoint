@@ -26,7 +26,7 @@ function TripCard({
                     {trip.startDate} → {trip.endDate}
                 </p>
             </div>
-            <div className="card__actions">
+            <div className="trip-card__actions">
                 <button
                     type="button"
                     className="button button--secondary"
