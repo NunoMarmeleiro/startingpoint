@@ -2,6 +2,7 @@ import { useState } from "react"
 import * as React from "react"
 import { createTrip, updateTrip } from "../../services/tripService"
 import type { Trip } from "../../models/Trip"
+import { toast } from "sonner"
 
 type CreateTripModalProps = {
     onCreated?: (trip: Trip) => void
@@ -31,7 +32,6 @@ function TripModal({
     )
 
     const [dateError, setDateError] = useState("")
-    const [error, setError] = useState("")
 
     function handleClose() {
         if(isSubmitting) return
@@ -47,7 +47,6 @@ function TripModal({
     async function handleSubmit(
         event: React.SyntheticEvent<HTMLFormElement>
     ) {
-        
         event.preventDefault()
         if (endDate < startDate) {
             setDateError("End date cannot be before start date.")
@@ -55,7 +54,6 @@ function TripModal({
         }
 
         setDateError("")
-        setError("")
         setIsSubmitting(true)
 
         try {
@@ -66,8 +64,8 @@ function TripModal({
                     startDate,
                     endDate,
                 })
-
                 onUpdated?.(updatedTrip)
+                toast.success("Trip updated successfully.")
             } else {
                 const createdTrip = await createTrip({
                     name,
@@ -75,16 +73,16 @@ function TripModal({
                     startDate,
                     endDate,
                 })
-
                 onCreated?.(createdTrip)
+                toast.success("Trip created successfully.")
             }
 
             handleClose()
         } catch {
-            setError(
+            toast.error(
                 tripToEdit
-                    ? "Something went wrong while updating the trip. Please try again."
-                    : "Something went wrong while creating the trip. Please try again."
+                    ? "Failed to update trip."
+                    : "Failed to create trip."
             )
         } finally {
             setIsSubmitting(false)
@@ -128,12 +126,6 @@ function TripModal({
                     </button>
                     
                 </header>
-
-                {error && (
-                    <p className="modal__error">
-                        {error}
-                    </p>
-                )}
                 <div className="modal__content">
                     <form
                         id="create-trip-form"
