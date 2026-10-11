@@ -1,3 +1,5 @@
+using StartingPoint.Common.Exceptions;
+
 namespace StartingPoint.Trip.Domain;
 
 public sealed record DateRange
@@ -15,17 +17,17 @@ public sealed record DateRange
     {
         if (!start.HasValue)
         {
-            throw new ArgumentException("There must be a start date");
+            throw new DomainException("There must be a start date");
         }
         
         if (!end.HasValue)
         {
-            throw new ArgumentException("There must be an end date");
+            throw new DomainException("There must be an end date");
         }
         
         if (end < start)
         {
-            throw new ArgumentException(
+            throw new DomainException(
                 "The end date cannot be before the start date.");
         }
 

@@ -1,3 +1,5 @@
+using StartingPoint.Common.Exceptions;
+
 namespace StartingPoint.Trip.Domain;
 
 public sealed class PointOfInterest
@@ -43,9 +45,8 @@ public sealed class PointOfInterest
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException(
-                "Point of interest name cannot be empty.",
-                nameof(name));
+            throw new DomainException(
+                "Point of interest name cannot be empty.");
         }
 
         return new PointOfInterest(
@@ -66,9 +67,8 @@ public sealed class PointOfInterest
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException(
-                "Point of interest name cannot be empty.",
-                nameof(name));
+            throw new DomainException(
+                "Point of interest name cannot be empty.");
         }
 
         Name = name.Trim();
