@@ -6,6 +6,7 @@ import TripCard from "./TripCard"
 import "./TripList.css"
 import TripModal from "./TripModal"
 import { deleteTrip } from "../../services/tripService"
+import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 
 function TripList() {
     const [trips, setTrips] = useState<Trip[]>([])
@@ -17,6 +18,8 @@ function TripList() {
             try {
                 const data = await getTrips()
                 setTrips(data)
+            } catch (error: unknown) {
+                toast.error(getErrorMessage(error))
             } finally {
                 setIsLoading(false)
             }
@@ -37,15 +40,14 @@ function TripList() {
         try {
             await deleteTrip(trip.id)
 
-            // Remove the trip from the current list
             setTrips((currentTrips) =>
                 currentTrips.filter(
                     (currentTrip) => currentTrip.id !== trip.id
                 )
             )
             toast.success("Trip deleted successfully.")
-        } catch {
-            toast.error("Failed to delete trip. Please try again.")
+        } catch (error: unknown) {
+            toast.error(getErrorMessage(error))
         }
     }
 

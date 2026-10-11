@@ -8,6 +8,7 @@ import "./TripDetailsPage.css"
 import POIModal from "../../components/pois/POIModal"
 import POICard from "../../components/pois/POICard"
 import type {PointOfInterest} from "../../models/PointOfInterest.ts";
+import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 
 function TripDetailsPage() {
     const navigate = useNavigate();
@@ -30,6 +31,8 @@ function TripDetailsPage() {
             try {
                 const data = await getTripById(tripId)
                 setTrip(data)
+            } catch (error: unknown) {
+                toast.error(getErrorMessage(error))
             } finally {
                 setIsLoading(false);
             }
@@ -61,11 +64,22 @@ function TripDetailsPage() {
             const updatedTrip = await getTripById(id)
             setTrip(updatedTrip)
             toast.success("Point of interest deleted successfully.")
-        } catch {
-            toast.error("Failed to delete point of interest. Please try again.")
+        } catch (error: unknown) {
+            toast.error(getErrorMessage(error))
         }
     }
 
+    async function handleSavePOI() {
+        if (!id) {
+            return
+        }
+        try {
+            const updatedTrip = await getTripById(id)
+            setTrip(updatedTrip)
+        } catch {
+            toast.error("Failed to update trip data. Please try again.")
+        }
+    }
 
     return (
         <main>
@@ -197,10 +211,7 @@ function TripDetailsPage() {
                                 setIsAddPOIModalOpen(false)
                                 setPoiToEdit(null)
                             }}
-                            onSaved={async () => {
-                                const updatedTrip = await getTripById(trip.id)
-                                setTrip(updatedTrip)
-                            }}
+                             onSaved={handleSavePOI}
                         />
                     )}
                 </section>

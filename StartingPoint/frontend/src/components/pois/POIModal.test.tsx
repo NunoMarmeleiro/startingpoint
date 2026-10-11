@@ -191,7 +191,7 @@ describe("AddPOIModal", () => {
         expect(
             toast.error
         ).toHaveBeenCalledWith(
-            "Something went wrong while adding the point of interest. Please try again."
+            "Something went wrong. Please try again."
         )
 
         expect(

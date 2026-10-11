@@ -10,6 +10,7 @@ import {
     type PointOfInterest
 } from "../../models/PointOfInterest"
 import "./POIModal.css"
+import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 
 type POIModalProps = {
     tripId: string
@@ -106,12 +107,8 @@ function POIModal({
             )
             onSaved?.()
             handleClose()
-        } catch {
-            toast.error(
-                poiToEdit
-                    ? "Something went wrong while updating the point of interest. Please try again."
-                    : "Something went wrong while adding the point of interest. Please try again."
-            )
+        } catch (error: unknown){
+            toast.error(getErrorMessage(error))
         } finally {
             setIsSubmitting(false)
         }

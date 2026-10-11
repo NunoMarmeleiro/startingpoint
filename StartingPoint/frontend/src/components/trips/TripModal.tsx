@@ -4,6 +4,7 @@ import * as React from "react"
 import { createTrip, updateTrip } from "../../services/tripService"
 import type { Trip } from "../../models/Trip"
 import { toast } from "sonner"
+import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 
 type CreateTripModalProps = {
     onCreated?: (trip: Trip) => void
@@ -70,11 +71,13 @@ function TripModal({
         if(!startDate.trim()){
             toast.error("Start date is required.")
             startDateInputRef.current?.focus()
+            return
         }
         
         if(!endDate.trim()){
             toast.error("End date is required.")
             endDateInputRef.current?.focus()
+            return
         }
         
         if (endDate < startDate) {
@@ -107,12 +110,8 @@ function TripModal({
             }
 
             handleClose()
-        } catch {
-            toast.error(
-                tripToEdit
-                    ? "Failed to update trip."
-                    : "Failed to create trip."
-            )
+        } catch (error: unknown) {
+            toast.error(getErrorMessage(error))
         } finally {
             setIsSubmitting(false)
         }
