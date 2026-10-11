@@ -200,7 +200,7 @@ public class TripServiceTests
             .Setup(repository => repository.GetByIdAsync(trip.Id))
             .ReturnsAsync(trip);
 
-        await Assert.ThrowsAsync<ArgumentException>(
+        await Assert.ThrowsAsync<DomainException>(
             () => _tripService.AddPointOfInterest(
                 trip.Id,
                 "",
@@ -367,7 +367,7 @@ public class TripServiceTests
             new DateOnly(2026, 11, 10),
             new DateOnly(2026, 11, 5));
 
-        await Assert.ThrowsAsync<ArgumentException>(
+        await Assert.ThrowsAsync<DomainException>(
             () => _tripService.UpdateTrip(trip.Id, request));
 
         _repositoryMock.Verify(

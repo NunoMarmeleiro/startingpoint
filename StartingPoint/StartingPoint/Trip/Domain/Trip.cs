@@ -1,3 +1,5 @@
+using StartingPoint.Common.Exceptions;
+
 namespace StartingPoint.Trip.Domain;
 
 public class Trip
@@ -38,16 +40,14 @@ public class Trip
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException(
-                "Trip name cannot be empty.",
-                nameof(name));
+            throw new DomainException(
+                "Trip name cannot be empty.");
         }
 
         if (string.IsNullOrWhiteSpace(destination))
         {
-            throw new ArgumentException(
-                "Trip destination cannot be empty.",
-                nameof(destination));
+            throw new DomainException(
+                "Trip destination cannot be empty.");
         }
 
         return new Trip(
@@ -59,10 +59,10 @@ public class Trip
 
     public void AddPointOfInterest(PointOfInterest pointOfInterest)
     {
-        ArgumentNullException.ThrowIfNull(pointOfInterest);
+        if (pointOfInterest is null) throw new DomainException("There must be a point of interest.");
         if (_pointsOfInterest.Any(p => p.Id == pointOfInterest.Id))
         {
-            throw new InvalidOperationException(
+            throw new DomainException(
                 "The point of interest is already part of this trip.");
         }
         _pointsOfInterest.Add(pointOfInterest);
@@ -75,7 +75,7 @@ public class Trip
 
         if (pointOfInterest is null)
         {
-            throw new InvalidOperationException(
+            throw new DomainException(
                 "The point of interest does not belong to this trip.");
         }
 
@@ -89,16 +89,14 @@ public class Trip
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException(
-                "Trip name cannot be empty.",
-                nameof(name));
+            throw new DomainException(
+                "Trip name cannot be empty.");
         }
 
         if (string.IsNullOrWhiteSpace(destination))
         {
-            throw new ArgumentException(
-                "Trip destination cannot be empty.",
-                nameof(destination));
+            throw new DomainException(
+                "Trip destination cannot be empty.");
         }
 
         Name = name.Trim();

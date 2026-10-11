@@ -67,6 +67,7 @@ describe("TripList", () => {
         ).not.toBeInTheDocument()
 
         expect(screen.getByText("Berlin")).toBeInTheDocument()
+        expect(toast.success).toHaveBeenCalledWith("Trip deleted successfully.")
     })
 
     it("does not delete a trip when deletion is cancelled", async () => {
@@ -117,11 +118,27 @@ describe("TripList", () => {
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith(
-                "Failed to delete trip. Please try again."
+                "Something went wrong. Please try again."
             )
         })
 
         expect(screen.getByText("Barcelona")).toBeInTheDocument()
         expect(screen.getByText("Berlin")).toBeInTheDocument()
+    })
+
+    it("shows an error toast when loading trips fails", async () => {
+        vi.mocked(getTrips).mockRejectedValue(new Error("API error"))
+
+        render(
+            <MemoryRouter>
+                <TripList />
+            </MemoryRouter>
+        )
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith(
+                "Something went wrong. Please try again."
+            )
+        })
     })
 })

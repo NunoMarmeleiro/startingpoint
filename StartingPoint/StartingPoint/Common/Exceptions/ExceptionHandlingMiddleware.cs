@@ -21,6 +21,10 @@ public class ExceptionHandlingMiddleware
         {
             await HandleEntityNotFoundExceptionAsync(context, ex);
         }
+        catch (DomainException ex)
+        {
+            await HandleDomainExceptionAsync(context, ex);
+        }
     }
 
     private static async Task HandleEntityNotFoundExceptionAsync(
@@ -36,6 +40,23 @@ public class ExceptionHandlingMiddleware
         };
 
         context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
+    }
+    
+    private static async Task HandleDomainExceptionAsync(
+        HttpContext context,
+        DomainException exception)
+    {
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Title = "Domain rule violation",
+            Detail = exception.Message,
+            Instance = context.Request.Path
+        };
+
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
         await context.Response.WriteAsJsonAsync(problemDetails);
     }

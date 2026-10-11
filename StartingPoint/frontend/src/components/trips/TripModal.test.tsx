@@ -202,7 +202,7 @@ describe("CreateTripModal", () => {
             screen.getByRole("button", { name: "Save changes" })
         )
 
-        expect(toast.error).toHaveBeenCalledWith("Failed to update trip.")
+        expect(toast.error).toHaveBeenCalledWith("Something went wrong. Please try again.")
 
         expect(
             screen.getByDisplayValue("My New Barcelona Trip")

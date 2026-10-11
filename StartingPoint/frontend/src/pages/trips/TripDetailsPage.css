@@ -95,7 +95,7 @@
 }
 
 .poi-list__empty p {
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 0 var(--spacing-lg);
     color: var(--color-text-muted);
 }
@@ -147,7 +147,7 @@
 }
 
 .trip-details__empty p {
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 0 var(--spacing-lg);
 
     color: var(--color-text-muted);

@@ -1,3 +1,4 @@
+using StartingPoint.Common.Exceptions;
 using StartingPoint.Trip.Domain;
 
 namespace StartingPoint.Tests.Trip.Domain;
@@ -32,7 +33,7 @@ public class TripTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<DomainException>(() =>
             StartingPoint.Trip.Domain.Trip.Create(
                 "",
                 "Barcelona",
@@ -46,7 +47,7 @@ public class TripTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        Assert.Throws<ArgumentException>(() =>
+        Assert.Throws<DomainException>(() =>
             StartingPoint.Trip.Domain.Trip.Create(
                 "Barcelona Trip",
                 "",

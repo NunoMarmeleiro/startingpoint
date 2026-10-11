@@ -11,6 +11,7 @@ import {
     getTripById,
     deletePointOfInterest,
 } from "../../services/tripService"
+import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 vi.mock("../../services/tripService", () => ({
     getTripById: vi.fn(),
     deletePointOfInterest: vi.fn(),
@@ -237,14 +238,33 @@ describe("TripDetailsPage", () => {
         )
 
         await waitFor(() => {
-            expect(toast.error).toHaveBeenCalledWith(
-                "Failed to delete point of interest. Please try again."
-            )
+            expect(toast.error).toHaveBeenCalledWith("Something went wrong. Please try again.")
         })
 
         expect(
             screen.getByText("Sagrada Família")
         ).toBeInTheDocument()
+    })
+
+    it("shows an error toast when loading the trip fails", async () => {
+        vi.mocked(getTripById).mockRejectedValue(new Error("API error"))
+
+        render(
+            <MemoryRouter initialEntries={["/trips/trip-1"]}>
+                <Routes>
+                    <Route
+                        path="/trips/:id"
+                        element={<TripDetailsPage />}
+                    />
+                </Routes>
+            </MemoryRouter>
+        )
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith(
+                getErrorMessage("API error")
+            )
+        })
     })
 })
 
