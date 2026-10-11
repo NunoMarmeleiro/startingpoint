@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
+import { toast } from "sonner"
 import TripModal from "./TripModal"
 import type { Trip } from "../../models/Trip"
 
@@ -113,6 +114,7 @@ describe("CreateTripModal", () => {
         )
 
         expect(onUpdated).toHaveBeenCalledWith(updatedTrip)
+        expect(toast.success).toHaveBeenCalledWith("Trip updated successfully.")
     })
 
     it("does not update the trip when the end date is before the start date", async () => {
@@ -157,8 +159,10 @@ describe("CreateTripModal", () => {
         )
 
         expect(
-            screen.getByText("End date cannot be before start date.")
-        ).toBeInTheDocument()
+            toast.error
+        ).toHaveBeenCalledWith(
+            "End date cannot be before start date."
+        )
 
         expect(updateTripMock).not.toHaveBeenCalled()
         expect(onUpdated).not.toHaveBeenCalled()
@@ -198,11 +202,7 @@ describe("CreateTripModal", () => {
             screen.getByRole("button", { name: "Save changes" })
         )
 
-        expect(
-            await screen.findByText(
-                "Something went wrong while updating the trip. Please try again."
-            )
-        ).toBeInTheDocument()
+        expect(toast.error).toHaveBeenCalledWith("Failed to update trip.")
 
         expect(
             screen.getByDisplayValue("My New Barcelona Trip")

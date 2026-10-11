@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { vi, describe, it, expect, beforeEach } from "vitest"
+import { toast } from "sonner"
 import TripList from "./TripList"
 import { getTrips, deleteTrip } from "../../services/tripService"
 import type { Trip } from "../../models/Trip"
@@ -88,6 +89,37 @@ describe("TripList", () => {
         await user.click(deleteButtons[0])
 
         expect(deleteTrip).not.toHaveBeenCalled()
+
+        expect(screen.getByText("Barcelona")).toBeInTheDocument()
+        expect(screen.getByText("Berlin")).toBeInTheDocument()
+    })
+
+    it("shows an error toast when deleting a trip fails", async () => {
+        const user = userEvent.setup()
+
+        vi.spyOn(window, "confirm").mockReturnValue(true)
+
+        vi.mocked(deleteTrip).mockRejectedValue(new Error("API error"))
+
+        render(
+            <MemoryRouter>
+                <TripList />
+            </MemoryRouter>
+        )
+
+        await screen.findByText("Barcelona")
+
+        const deleteButtons = screen.getAllByRole("button", {
+            name: "Delete",
+        })
+
+        await user.click(deleteButtons[0])
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith(
+                "Failed to delete trip. Please try again."
+            )
+        })
 
         expect(screen.getByText("Barcelona")).toBeInTheDocument()
         expect(screen.getByText("Berlin")).toBeInTheDocument()

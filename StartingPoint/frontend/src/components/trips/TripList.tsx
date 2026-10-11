@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import type { Trip } from "../../models/Trip"
 import { getTrips } from "../../services/tripService"
+import { toast } from "sonner"
 import TripCard from "./TripCard"
 import "./TripList.css"
 import TripModal from "./TripModal"
@@ -33,14 +34,19 @@ function TripList() {
             return
         }
 
-        await deleteTrip(trip.id)
+        try {
+            await deleteTrip(trip.id)
 
-        // Remove the trip from the current list
-        setTrips((currentTrips) =>
-            currentTrips.filter(
-                (currentTrip) => currentTrip.id !== trip.id
+            // Remove the trip from the current list
+            setTrips((currentTrips) =>
+                currentTrips.filter(
+                    (currentTrip) => currentTrip.id !== trip.id
+                )
             )
-        )
+            toast.success("Trip deleted successfully.")
+        } catch {
+            toast.error("Failed to delete trip. Please try again.")
+        }
     }
 
     return (
