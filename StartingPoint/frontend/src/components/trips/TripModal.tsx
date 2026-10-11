@@ -72,7 +72,10 @@ function TripModal({
             startDateInputRef.current?.focus()
         }
         
-        if(!endDate.trim()){}
+        if(!endDate.trim()){
+            toast.error("End date is required.")
+            endDateInputRef.current?.focus()
+        }
         
         if (endDate < startDate) {
             toast.error("End date cannot be before start date.")
