@@ -5,6 +5,7 @@ import {
 import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { vi } from "vitest"
+import { toast } from "sonner"
 import TripDetailsPage from "./TripDetailsPage"
 import {
     getTripById,
@@ -140,6 +141,10 @@ describe("TripDetailsPage", () => {
                 screen.queryByText("Sagrada Família")
             ).not.toBeInTheDocument()
         })
+
+        expect(toast.success).toHaveBeenCalledWith(
+            "Point of interest deleted successfully."
+        )
     })
 
     it("does not delete a point of interest when deletion is cancelled", async () => {
@@ -183,6 +188,60 @@ describe("TripDetailsPage", () => {
         )
 
         expect(deletePointOfInterest).not.toHaveBeenCalled()
+        expect(
+            screen.getByText("Sagrada Família")
+        ).toBeInTheDocument()
+    })
+
+    it("shows an error toast when deleting a point of interest fails", async () => {
+        const user = userEvent.setup()
+
+        vi.spyOn(window, "confirm").mockReturnValue(true)
+
+        const trip = {
+            id: "trip-1",
+            name: "Barcelona",
+            destination: "Barcelona",
+            startDate: "2026-09-20",
+            endDate: "2026-09-25",
+            pointsOfInterest: [
+                {
+                    id: "poi-1",
+                    name: "Sagrada Família",
+                    description: "A famous basilica",
+                    category: "Attraction" as const,
+                    address: "Barcelona",
+                    notes: "Visit in the morning",
+                },
+            ],
+        }
+
+        vi.mocked(getTripById).mockResolvedValue(trip)
+        vi.mocked(deletePointOfInterest).mockRejectedValue(new Error("API error"))
+
+        render(
+            <MemoryRouter initialEntries={["/trips/trip-1"]}>
+                <Routes>
+                    <Route
+                        path="/trips/:id"
+                        element={<TripDetailsPage />}
+                    />
+                </Routes>
+            </MemoryRouter>
+        )
+
+        await screen.findByText("Sagrada Família")
+
+        await user.click(
+            screen.getByRole("button", { name: "Delete" })
+        )
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith(
+                "Failed to delete point of interest. Please try again."
+            )
+        })
+
         expect(
             screen.getByText("Sagrada Família")
         ).toBeInTheDocument()

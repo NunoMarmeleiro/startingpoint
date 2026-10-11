@@ -1,6 +1,7 @@
 import {fireEvent, render, screen, waitFor} from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
+import { toast } from "sonner"
 import POIModal from "./POIModal"
 import {updatePointOfInterest} from "../../services/tripService.ts";
 
@@ -24,7 +25,7 @@ describe("AddPOIModal", () => {
             })
         ).toBeInTheDocument()
 
-        expect(screen.getByLabelText("Name")).toBeInTheDocument()
+        expect(screen.getByLabelText(/Name/)).toBeInTheDocument()
         expect(
             screen.getByLabelText("Category")
         ).toBeInTheDocument()
@@ -64,7 +65,7 @@ describe("AddPOIModal", () => {
         )
 
         await user.type(
-            screen.getByLabelText("Name"),
+            screen.getByLabelText(/Name/),
             "Sagrada Família"
         )
 
@@ -106,6 +107,7 @@ describe("AddPOIModal", () => {
         )
 
         expect(onSaved).toHaveBeenCalled()
+        expect(toast.success).toHaveBeenCalledWith("Point of interest added successfully.")
         const modal = screen.getByRole("heading", {
             name: "Add point of interest",
         }).closest("section")
@@ -136,7 +138,7 @@ describe("AddPOIModal", () => {
             />
         )
 
-        const nameInput = screen.getByLabelText("Name")
+        const nameInput = screen.getByLabelText(/Name/)
 
         nameInput.removeAttribute("required")
 
@@ -146,9 +148,7 @@ describe("AddPOIModal", () => {
             })
         )
 
-        expect(
-            screen.getByText("Name is required.")
-        ).toBeInTheDocument()
+        expect(toast.error).toHaveBeenCalledWith("Name is required.")
 
         expect(addPointOfInterestMock).not.toHaveBeenCalled()
     })
@@ -178,7 +178,7 @@ describe("AddPOIModal", () => {
         )
 
         await user.type(
-            screen.getByLabelText("Name"),
+            screen.getByLabelText(/Name/),
             "Sagrada Família"
         )
 
@@ -189,10 +189,10 @@ describe("AddPOIModal", () => {
         )
 
         expect(
-            await screen.findByText(
-                "Something went wrong while adding the point of interest. Please try again."
-            )
-        ).toBeInTheDocument()
+            toast.error
+        ).toHaveBeenCalledWith(
+            "Something went wrong while adding the point of interest. Please try again."
+        )
 
         expect(
             screen.getByDisplayValue("Sagrada Família")
@@ -276,6 +276,7 @@ describe("AddPOIModal", () => {
                     notes: "Old notes",
                 }
             )
+            expect(toast.success).toHaveBeenCalledWith("Point of interest updated successfully.")
         })
     })
 })

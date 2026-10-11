@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useRef } from "react";
 import * as React from "react"
 import { createTrip, updateTrip } from "../../services/tripService"
 import type { Trip } from "../../models/Trip"
@@ -21,18 +22,23 @@ function TripModal({
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const [name, setName] = useState(tripToEdit?.name ?? "")
+    const nameInputRef = useRef<HTMLInputElement>(null)
+    
     const [destination, setDestination] = useState(
         tripToEdit?.destination ?? ""
     )
+    const destinationInputRef = useRef<HTMLInputElement>(null)
+    
     const [startDate, setStartDate] = useState(
         tripToEdit?.startDate ?? ""
     )
+    const startDateInputRef = useRef<HTMLInputElement>(null)
+    
     const [endDate, setEndDate] = useState(
         tripToEdit?.endDate ?? ""
     )
-
-    const [dateError, setDateError] = useState("")
-
+    const endDateInputRef = useRef<HTMLInputElement>(null)
+    
     function handleClose() {
         if(isSubmitting) return
         setIsClosing(true)
@@ -48,12 +54,32 @@ function TripModal({
         event: React.SyntheticEvent<HTMLFormElement>
     ) {
         event.preventDefault()
+        
+        if(!name.trim()){
+            toast.error("Name is required.")
+            nameInputRef.current?.focus()
+            return
+        }
+        
+        if(!destination.trim()){
+            toast.error("Destination is required.")
+            nameInputRef.current?.focus()
+            return
+        }
+        
+        if(!startDate.trim()){
+            toast.error("Start date is required.")
+            startDateInputRef.current?.focus()
+        }
+        
+        if(!endDate.trim()){}
+        
         if (endDate < startDate) {
-            setDateError("End date cannot be before start date.")
+            toast.error("End date cannot be before start date.")
+            endDateInputRef.current?.focus();
             return
         }
 
-        setDateError("")
         setIsSubmitting(true)
 
         try {
@@ -137,10 +163,11 @@ function TripModal({
                         <div className="modal__field">
                             <label htmlFor="name">
                                 Trip name{" "}
-                                <span className="required">*</span>
+                                <span className="required" aria-hidden="true">*</span>
                             </label>
     
                             <input
+                                ref={nameInputRef}
                                 id="name"
                                 type="text"
                                 value={name}
@@ -155,10 +182,11 @@ function TripModal({
                         <div className="modal__field">
                             <label htmlFor="destination">
                                 Destination{" "}
-                                <span className="required">*</span>
+                                <span className="required" aria-hidden="true">*</span>
                             </label>
     
                             <input
+                                ref={destinationInputRef}
                                 id="destination"
                                 type="text"
                                 value={destination}
@@ -177,6 +205,7 @@ function TripModal({
                             </label>
     
                             <input
+                                ref={startDateInputRef}
                                 id="startDate"
                                 type="date"
                                 value={startDate}
@@ -194,6 +223,7 @@ function TripModal({
                             </label>
     
                             <input
+                                ref={endDateInputRef}
                                 id="endDate"
                                 type="date"
                                 value={endDate}
@@ -204,12 +234,6 @@ function TripModal({
                                 required
                             />
                         </div>
-    
-                        {dateError && (
-                            <p className="form-field__error">
-                                {dateError}
-                            </p>
-                        )}
                     </form>
                 </div>
                 <div className="modal__actions">

@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react"
 import {Link, useNavigate, useParams} from "react-router-dom"
 import {deletePointOfInterest, getTripById} from "../../services/tripService"
+import { toast } from "sonner"
 import type {Trip} from "../../models/Trip"
 import TripModal from "../../components/trips/TripModal"
 import "./TripDetailsPage.css"
@@ -50,13 +51,19 @@ function TripDetailsPage() {
         if (!confirmed) {
             return
         }
-        await deletePointOfInterest(
-            id,
-            poi.id
-        )
-
-        const updatedTrip = await getTripById(id)
-        setTrip(updatedTrip)
+        
+        try {
+            await deletePointOfInterest(
+                id,
+                poi.id
+            )
+    
+            const updatedTrip = await getTripById(id)
+            setTrip(updatedTrip)
+            toast.success("Point of interest deleted successfully.")
+        } catch {
+            toast.error("Failed to delete point of interest. Please try again.")
+        }
     }
 
 

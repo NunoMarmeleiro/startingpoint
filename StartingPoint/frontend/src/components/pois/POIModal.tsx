@@ -1,6 +1,8 @@
 import { useState } from "react"
+import { useRef } from "react"
 import * as React from "react"
 import {addPointOfInterest, updatePointOfInterest} from "../../services/tripService"
+import { toast } from "sonner"
 import {
     type AddPointOfInterestRequest,
     type POICategory,
@@ -47,10 +49,9 @@ function POIModal({
         useState(poiToEdit?.address ?? "")
     const [notes, setNotes] =
         useState(poiToEdit?.notes ?? "")
-    const [error, setError] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isClosing, setIsClosing] = useState(false)
-
+    const nameInputRef = useRef<HTMLInputElement>(null)
     function handleClose() {
         if (isSubmitting) return
         setIsClosing(true)
@@ -68,11 +69,11 @@ function POIModal({
         event.preventDefault()
 
         if (!name.trim()) {
-            setError("Name is required.")
+            toast.error("Name is required.")
+            nameInputRef.current?.focus();
             return
         }
 
-        setError("")
         setIsSubmitting(true)
 
         const request: AddPointOfInterestRequest = {
@@ -98,10 +99,15 @@ function POIModal({
                 )
             }
 
+            toast.success(
+                poiToEdit
+                    ? "Point of interest updated successfully."
+                    : "Point of interest added successfully."
+            )
             onSaved?.()
             handleClose()
         } catch {
-            setError(
+            toast.error(
                 poiToEdit
                     ? "Something went wrong while updating the point of interest. Please try again."
                     : "Something went wrong while adding the point of interest. Please try again."
@@ -153,12 +159,6 @@ function POIModal({
                     
                     
                 </header>
-
-                {error && (
-                    <p className="modal__error">
-                        {error}
-                    </p>
-                )}
                 <div className="modal__content">
                     <form
                         id="poi-form"
@@ -167,10 +167,12 @@ function POIModal({
                     >
                         <div className="modal__field">
                             <label htmlFor="poi-name">
-                                Name
+                                Name{" "}
+                                <span className="required" aria-hidden="true">*</span>
                             </label>
     
                             <input
+                                ref={nameInputRef}
                                 id="poi-name"
                                 type="text"
                                 value={name}
