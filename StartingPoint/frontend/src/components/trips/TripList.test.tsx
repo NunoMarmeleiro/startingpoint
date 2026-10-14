@@ -58,6 +58,10 @@ describe("TripList", () => {
 
         await user.click(deleteButtons[0])
 
+        await user.click(
+            screen.getByRole("button", { name: "Delete trip" })
+        )
+
         await waitFor(() => {
             expect(deleteTrip).toHaveBeenCalledWith("trip-1")
         })
@@ -115,6 +119,10 @@ describe("TripList", () => {
         })
 
         await user.click(deleteButtons[0])
+
+        await user.click(
+            screen.getByRole("button", { name: "Delete trip" })
+        )
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith(

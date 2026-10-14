@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react"
 import {Link, useNavigate, useParams} from "react-router-dom"
-import {deletePointOfInterest, getTripById} from "../../services/tripService"
+import {deletePointOfInterest, deleteTrip, getTripById} from "../../services/tripService"
 import { toast } from "sonner"
 import type {Trip} from "../../models/Trip"
 import TripModal from "../../components/trips/TripModal"
@@ -9,6 +9,7 @@ import POIModal from "../../components/pois/POIModal"
 import POICard from "../../components/pois/POICard"
 import type {PointOfInterest} from "../../models/PointOfInterest.ts";
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
+import ConfirmDialog from "../../common/ConfirmDialog.tsx";
 
 function TripDetailsPage() {
     const navigate = useNavigate();
@@ -19,8 +20,8 @@ function TripDetailsPage() {
         useState<PointOfInterest | null>()
     const [trip, setTrip] = useState<Trip | null>(null)
     const [isLoading, setIsLoading] = useState(true)
-    
-    
+    const [poiToDelete, setPoiToDelete] = useState<PointOfInterest | null>(null)
+    const [tripToDelete, setTripToDelete] = useState<Trip | null>(null)
     
     useEffect(() => {
         if (!id) {
@@ -42,23 +43,35 @@ function TripDetailsPage() {
         loadTrip()
     }, [id])
 
-    async function handleDeletePOI(poi: PointOfInterest) {
-        if (!id) {
-            return
-        }
-        
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${poi.name}"?`
-        )
+    async function confirmDeleteTrip() {
+        if (!tripToDelete) return
 
-        if (!confirmed) {
-            return
+        try {
+            await deleteTrip(tripToDelete.id)
+            
+            toast.success("Trip deleted successfully.")
+            navigate('/')
+        } catch (error) {
+            toast.error(getErrorMessage(error))
         }
+    }
+
+    function handleDeleteTrip(trip: Trip) {
+        setTripToDelete(trip)
+    }
+    
+    function handleDeletePOI(poi: PointOfInterest) {
+        setPoiToDelete(poi)
+    }
+    
+    async function confirmDeletePOI() {
+        if(!id) return
+        if (!poiToDelete) return
         
         try {
             await deletePointOfInterest(
                 id,
-                poi.id
+                poiToDelete.id
             )
     
             const updatedTrip = await getTripById(id)
@@ -126,14 +139,22 @@ function TripDetailsPage() {
                                 {trip.startDate} → {trip.endDate}
                             </p>
                         </div>
-
-                        <button
-                            type="button"
-                            className="button button--secondary"
-                            onClick={() => setIsEditModalOpen(true)}
-                        >
-                            Edit
-                        </button>
+                        <div className="trip-details__actions">
+                            <button
+                                type="button"
+                                className="button button--secondary"
+                                onClick={() => setIsEditModalOpen(true)}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                type="button"
+                                className="button button--danger"
+                                onClick={() => handleDeleteTrip(trip)}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </header>
 
                     <section className="trip-details__poi">
@@ -214,6 +235,30 @@ function TripDetailsPage() {
                              onSaved={handleSavePOI}
                         />
                     )}
+                    <ConfirmDialog
+                        open={poiToDelete !== null}
+                        onOpenChange={(open) => {
+                            if (!open) {
+                                setPoiToDelete(null)
+                            }
+                        }}
+                        title="Delete Point of Interest?"
+                        description={`Are you sure you want to delete "${poiToDelete?.name ?? ""}"? This action cannot be undone.`}
+                        confirmLabel="Delete POI"
+                        onConfirm={confirmDeletePOI}
+                    />
+                    <ConfirmDialog
+                        open={tripToDelete !== null}
+                        onOpenChange={(open) => {
+                            if (!open) {
+                                setTripToDelete(null)
+                            }
+                        }}
+                        title="Delete trip?"
+                        description={`Are you sure you want to delete "${tripToDelete?.name ?? ""}"? This action cannot be undone.`}
+                        confirmLabel="Delete trip"
+                        onConfirm={confirmDeleteTrip}
+                    />
                 </section>
             )}
         </main>

@@ -13,7 +13,8 @@
     --color-required: #ff0000ff;
 
     --color-danger: #dc2626;
-
+    --color-danger-hover: #c61a1a;
+    
     --color-poi-category: var(--color-primary);
 
     /* Spacing */

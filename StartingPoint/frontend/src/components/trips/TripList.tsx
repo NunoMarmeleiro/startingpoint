@@ -7,11 +7,13 @@ import "./TripList.css"
 import TripModal from "./TripModal"
 import { deleteTrip } from "../../services/tripService"
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
+import ConfirmDialog from "../../common/ConfirmDialog.tsx";
 
 function TripList() {
     const [trips, setTrips] = useState<Trip[]>([])
     const [isCreateTripOpen, setIsCreateTripOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [tripToDelete, setTripToDelete] = useState<Trip | null>(null)
 
     useEffect(() => {
         async function loadTrips() {
@@ -28,27 +30,26 @@ function TripList() {
         loadTrips()
     }, [])
 
-    async function handleDeleteTrip(trip: Trip) {
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${trip.name}"?`
-        )
-
-        if (!confirmed) {
-            return
-        }
+    async function confirmDeleteTrip() {
+        if (!tripToDelete) return
 
         try {
-            await deleteTrip(trip.id)
+            await deleteTrip(tripToDelete.id)
 
             setTrips((currentTrips) =>
                 currentTrips.filter(
-                    (currentTrip) => currentTrip.id !== trip.id
+                    (trip) => trip.id !== tripToDelete.id
                 )
             )
+
             toast.success("Trip deleted successfully.")
-        } catch (error: unknown) {
+        } catch (error) {
             toast.error(getErrorMessage(error))
         }
+    }
+
+    function handleDeleteTrip(trip: Trip) {
+        setTripToDelete(trip)
     }
 
     return (
@@ -104,7 +105,20 @@ function TripList() {
                     }}
                 />
             )}
+            <ConfirmDialog
+                open={tripToDelete !== null}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setTripToDelete(null)
+                    }
+                }}
+                title="Delete trip?"
+                description={`Are you sure you want to delete "${tripToDelete?.name ?? ""}"? This action cannot be undone.`}
+                confirmLabel="Delete trip"
+                onConfirm={confirmDeleteTrip}
+            />
         </section>
+        
         
         
     )
