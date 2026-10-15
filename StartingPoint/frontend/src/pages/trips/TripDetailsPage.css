@@ -152,3 +152,9 @@
 
     color: var(--color-text-muted);
 }
+
+.trip-details__actions {
+    display: flex;
+    justify-content: space-between;
+    gap:var(--spacing-md)
+}

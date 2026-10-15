@@ -12,11 +12,14 @@ type POICardProps = {
 }
 
 function POICard({ poi, onEdit, onDelete }: POICardProps) {
+
+    const headingId = `poi-heading-${poi.id}`
+    
     return (
-        <article className="card poi-card">
+        <article className="card poi-card" aria-labelledby={headingId}>
             <div className="card__header">
                 <div>
-                    <h3>{poi.name}</h3>
+                    <h3 id={headingId}>{poi.name}</h3>
                     <span
                         className="poi-card__category"
                         style={{

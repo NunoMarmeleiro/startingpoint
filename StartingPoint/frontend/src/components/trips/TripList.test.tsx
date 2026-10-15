@@ -41,9 +41,7 @@ describe("TripList", () => {
 
     it("deletes a trip after confirming", async () => {
         const user = userEvent.setup()
-
-        vi.spyOn(window, "confirm").mockReturnValue(true)
-
+        
         render(
             <MemoryRouter>
                 <TripList />
@@ -57,6 +55,10 @@ describe("TripList", () => {
         })
 
         await user.click(deleteButtons[0])
+
+        await user.click(
+            screen.getByRole("button", { name: "Delete trip" })
+        )
 
         await waitFor(() => {
             expect(deleteTrip).toHaveBeenCalledWith("trip-1")
@@ -72,9 +74,7 @@ describe("TripList", () => {
 
     it("does not delete a trip when deletion is cancelled", async () => {
         const user = userEvent.setup()
-
-        vi.spyOn(window, "confirm").mockReturnValue(false)
-
+        
         render(
             <MemoryRouter>
                 <TripList />
@@ -97,9 +97,7 @@ describe("TripList", () => {
 
     it("shows an error toast when deleting a trip fails", async () => {
         const user = userEvent.setup()
-
-        vi.spyOn(window, "confirm").mockReturnValue(true)
-
+        
         vi.mocked(deleteTrip).mockRejectedValue(new Error("API error"))
 
         render(
@@ -115,6 +113,10 @@ describe("TripList", () => {
         })
 
         await user.click(deleteButtons[0])
+
+        await user.click(
+            screen.getByRole("button", { name: "Delete trip" })
+        )
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith(
