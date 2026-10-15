@@ -1,10 +1,10 @@
 import {
     render,
-    screen, waitFor,
+    screen, waitFor, within,
 } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
-import { vi } from "vitest"
+import {beforeEach, expect, it, vi} from "vitest"
 import { toast } from "sonner"
 import TripDetailsPage from "./TripDetailsPage"
 import {
@@ -16,6 +16,10 @@ vi.mock("../../services/tripService", () => ({
     getTripById: vi.fn(),
     deletePointOfInterest: vi.fn(),
 }))
+
+beforeEach(() => {
+    vi.resetAllMocks()
+})
 
 describe("TripDetailsPage", () => {
     it("displays the trip's points of interest", async () => {
@@ -83,9 +87,7 @@ describe("TripDetailsPage", () => {
 
     it("deletes a point of interest after confirming", async () => {
         const user = userEvent.setup()
-
-        vi.spyOn(window, "confirm").mockReturnValue(true)
-
+        
         const trip = {
             id: "trip-1",
             name: "Barcelona",
@@ -124,19 +126,20 @@ describe("TripDetailsPage", () => {
             </MemoryRouter>
         )
 
-        await screen.findByText("Sagrada Família")
-
-        await user.click(
-            screen.getByRole("button", { name: "Delete" })
-        )
-
-        await waitFor(() => {
-            expect(deletePointOfInterest).toHaveBeenCalledWith(
-                "trip-1",
-                "poi-1"
-            )
+        const poiCard = await screen.findByRole("article", {
+            name: "Sagrada Família",
         })
-
+        
+        await user.click(
+            within(poiCard).getByRole("button", { name: "Delete" })
+        )
+        
+        const dialog = await screen.findByRole("alertdialog")
+        
+        await user.click(
+            within(dialog).getByRole("button", { name: "Delete POI" })
+        )
+        
         await waitFor(() => {
             expect(
                 screen.queryByText("Sagrada Família")
@@ -150,9 +153,7 @@ describe("TripDetailsPage", () => {
 
     it("does not delete a point of interest when deletion is cancelled", async () => {
         const user = userEvent.setup()
-
-        vi.spyOn(window, "confirm").mockReturnValue(false)
-
+        
         vi.mocked(getTripById).mockResolvedValue({
             id: "trip-1",
             name: "Barcelona",
@@ -181,11 +182,24 @@ describe("TripDetailsPage", () => {
                 </Routes>
             </MemoryRouter>
         )
+        await waitFor(() => {
+            expect(getTripById).toHaveBeenCalledWith("trip-1")
+        })
 
-        await screen.findByText("Sagrada Família")
+        const poiCard = screen.getByRole("article", {
+            name: "Sagrada Família",
+        })
 
         await user.click(
-            screen.getByRole("button", { name: "Delete" })
+            within(poiCard).getByRole("button", { name: "Delete" })
+        )
+        
+
+        const dialog = await screen.findByRole("alertdialog")
+
+        // Cancel the deletion
+        await user.click(
+            within(dialog).getByRole("button", { name: "Cancel" })
         )
 
         expect(deletePointOfInterest).not.toHaveBeenCalled()
@@ -196,9 +210,7 @@ describe("TripDetailsPage", () => {
 
     it("shows an error toast when deleting a point of interest fails", async () => {
         const user = userEvent.setup()
-
-        vi.spyOn(window, "confirm").mockReturnValue(true)
-
+        
         const trip = {
             id: "trip-1",
             name: "Barcelona",
@@ -231,10 +243,18 @@ describe("TripDetailsPage", () => {
             </MemoryRouter>
         )
 
-        await screen.findByText("Sagrada Família")
+        const poiCard = await screen.findByRole("article", {
+            name: "Sagrada Família",
+        })
 
         await user.click(
-            screen.getByRole("button", { name: "Delete" })
+            within(poiCard).getByRole("button", { name: "Delete" })
+        )
+
+        const dialog = await screen.findByRole("alertdialog")
+
+        await user.click(
+            within(dialog).getByRole("button", { name: "Delete POI" })
         )
 
         await waitFor(() => {
