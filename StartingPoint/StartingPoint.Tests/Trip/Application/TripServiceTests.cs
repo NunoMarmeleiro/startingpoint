@@ -4,6 +4,7 @@ using StartingPoint.Trip.Application.DTOs;
 using StartingPoint.Trip.Application.Repositories;
 using StartingPoint.Trip.Application.Services;
 using StartingPoint.Trip.Domain;
+using DomainTrip = StartingPoint.Trip.Domain.Trip;
 
 namespace StartingPoint.Tests.Trip.Application;
 
@@ -34,7 +35,7 @@ public class TripServiceTests
         Assert.Equal(date2, tripResponseDTO.EndDate);
         _repositoryMock.Verify(
             repository => repository.AddAsync(
-                It.Is<StartingPoint.Trip.Domain.Trip>(trip =>
+                It.Is<DomainTrip>(trip =>
                     trip.Name == "Barcelona Trip" &&
                     trip.Destination == "Barcelona" &&
                     trip.DateRange.Start == date1 &&
@@ -49,7 +50,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -79,7 +80,7 @@ public class TripServiceTests
 
         _repositoryMock
             .Setup(repository => repository.GetByIdAsync(id))
-            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+            .ReturnsAsync((DomainTrip?)null);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.GetTripById(id));
@@ -96,7 +97,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -133,7 +134,7 @@ public class TripServiceTests
 
         _repositoryMock
             .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+            .ReturnsAsync((DomainTrip?)null);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.AddPointOfInterest(
@@ -143,7 +144,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -154,7 +155,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -191,7 +192,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -224,14 +225,14 @@ public class TripServiceTests
         var dateRange2 = DateRange.Create(
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 15));
-        var trips = new List<StartingPoint.Trip.Domain.Trip>
+        var trips = new List<DomainTrip>
         {
-            StartingPoint.Trip.Domain.Trip.Create(
+            DomainTrip.Create(
                 "Japan",
                 "Tokyo",
                 dateRange),
 
-            StartingPoint.Trip.Domain.Trip.Create(
+            DomainTrip.Create(
                 "Portugal",
                 "Porto",
                 dateRange2)
@@ -267,7 +268,7 @@ public class TripServiceTests
         // Arrange
         _repositoryMock
             .Setup(repository => repository.GetAllAsync())
-            .ReturnsAsync(new List<StartingPoint.Trip.Domain.Trip>());
+            .ReturnsAsync(new List<DomainTrip>());
 
         // Act
         var result = await _tripService.GetAllTrips();
@@ -288,7 +289,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             originalDateRange);
@@ -328,7 +329,7 @@ public class TripServiceTests
 
         _repositoryMock
             .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+            .ReturnsAsync((DomainTrip?)null);
 
         var request = new UpdateTripRequestDTO(
             "Madrid Trip",
@@ -341,7 +342,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -352,7 +353,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -372,7 +373,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -383,7 +384,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -429,7 +430,7 @@ public class TripServiceTests
 
         _repositoryMock
             .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+            .ReturnsAsync((DomainTrip?)null);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.UpdatePointOfInterest(
@@ -440,7 +441,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -451,7 +452,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -471,7 +472,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -482,7 +483,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -516,7 +517,7 @@ public class TripServiceTests
 
         _repositoryMock
             .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+            .ReturnsAsync((DomainTrip?)null);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.DeletePointOfInterest(
@@ -525,7 +526,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -536,7 +537,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -554,7 +555,7 @@ public class TripServiceTests
 
         _repositoryMock.Verify(
             repository => repository.UpdateAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
     
@@ -565,7 +566,7 @@ public class TripServiceTests
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
 
-        var trip = StartingPoint.Trip.Domain.Trip.Create(
+        var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
             dateRange);
@@ -588,14 +589,14 @@ public class TripServiceTests
 
         _repositoryMock
             .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((StartingPoint.Trip.Domain.Trip?)null);
+            .ReturnsAsync((DomainTrip?)null);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.DeleteTrip(tripId));
 
         _repositoryMock.Verify(
             repository => repository.DeleteAsync(
-                It.IsAny<StartingPoint.Trip.Domain.Trip>()),
+                It.IsAny<DomainTrip>()),
             Times.Never);
     }
 }
