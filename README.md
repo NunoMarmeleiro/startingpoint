@@ -1,6 +1,6 @@
 # startingpoint
-Startingpoint is a tool to build itineraries everywhere, anywhere, easily. From manual, by hand, to the use of a simple prompt, this tool serves everyone.
 
+Startingpoint is a tool to build itineraries everywhere, anywhere, easily. From manual, by hand, to the use of a simple prompt, this tool serves everyone.
 
 ## Domain
 
@@ -26,3 +26,7 @@ Startingpoint is a tool to build itineraries everywhere, anywhere, easily. From 
     POICategory [Enum]
      ├── Id
      └── Name
+
+    User [Root]
+     |- Id
+     └- CreatedAt
