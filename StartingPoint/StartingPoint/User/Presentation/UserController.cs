@@ -6,21 +6,23 @@ namespace StartingPoint.User.Presentation;
 [ApiController]
 [Route("api/users")]
 public class UserController(
-    ApplicationUserService applicationUserService) : ControllerBase
+    UserService userService) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<IActionResult> Register(
-        RegisterApplicationUserRequestDTO request)
+    public async Task<ActionResult<UserResponseDTO>> Register(
+        RegisterUserRequestDTO request)
     {
-        var result = await applicationUserService.RegisterApplicationUserAsync(request);
+        var response = await userService.RegisterUserAsync(request);
+        return CreatedAtAction(
+            nameof(GetUserById),
+            new { id = response.Id },
+            response);
+    }
 
-        if (result.Succeeded) return StatusCode(StatusCodes.Status201Created);
-        var errors = result.Errors.Select(error => new
-        {
-            error.Code,
-            error.Description
-        });
-        return BadRequest(new { errors });
-
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<UserResponseDTO>> GetUserById(Guid id)
+    {
+        var result = await userService.GetById(id);
+        return Ok(result);
     }
 }

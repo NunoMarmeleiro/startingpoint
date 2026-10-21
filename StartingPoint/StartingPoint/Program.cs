@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using StartingPoint.User.Application.Services;
 using StartingPoint.User.Infrastructure.Authentication;
 using StartingPoint.User.Infrastructure.Persistence;
+using StartingPoint.User.Application.Repositories;
+using StartingPoint.User.Infrastructure.Persistence;
+using StartingPoint.User.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +45,9 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
 builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
     options.UseInMemoryDatabase("StartingPoint"));
-builder.Services.AddScoped<ApplicationUserService>();
+//User
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
