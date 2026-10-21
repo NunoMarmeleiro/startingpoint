@@ -63,7 +63,7 @@ public class TripController : ControllerBase
             request.Address,
             request.Notes);
 
-        return NoContent();
+        return StatusCode(StatusCodes.Status201Created);
     }
     
     [HttpPut("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]

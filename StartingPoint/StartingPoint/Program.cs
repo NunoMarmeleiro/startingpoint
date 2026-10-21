@@ -5,6 +5,10 @@ using StartingPoint.Trip.Application.Services;
 using StartingPoint.Trip.Infrastructure.Persistence;
 using StartingPoint.Trip.Infrastructure.Persistence.Repositories;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using StartingPoint.User.Application.Services;
+using StartingPoint.User.Infrastructure.Authentication;
+using StartingPoint.User.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,13 +21,28 @@ builder.Services.AddControllers()
             new JsonStringEnumConverter());
     });
 
+//Trips
 builder.Services.AddDbContext<TripDbContext>(options =>
     options.UseInMemoryDatabase("StartingPoint"));
-
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<TripService>();
 
-
+//ApplicationUser
+builder.Services
+    .AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequiredLength = 12;
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+    })
+    .AddRoles<IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
+    options.UseInMemoryDatabase("StartingPoint"));
+builder.Services.AddScoped<ApplicationUserService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
