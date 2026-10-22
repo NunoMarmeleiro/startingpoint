@@ -7,8 +7,8 @@ public sealed record RegisterUserRequestDTO
     [Required]
     string Email,
     [Required]
-    string Password,
+    string Username,
     [Required]
-    string Username
+    string Password
     
 );
