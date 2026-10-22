@@ -14,5 +14,6 @@
     &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WhenRollbackFails_ThrowsRegistrationException&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.GetById_WhenUserExists_ReturnsUserResponse&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.GetById_WhenUserDoesNotExist_ThrowsEntityNotFoundException&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WhenUsernameAndEmailHasWhitespacesTrims_ReturnsUserResponse&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

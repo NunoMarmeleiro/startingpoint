@@ -249,4 +249,50 @@ public class UserServiceTests
             repository => repository.GetByIdAsync(id),
             Times.Once);
     }
+
+    [Fact]
+    public async Task? RegisterUserAsync_WhenUsernameAndEmailHasWhitespacesTrims_ReturnsUserResponse()
+    {
+        // Arrange
+        var request = new RegisterUserRequestDTO(
+            "   nuno@example.com      ",
+            "    nuno    ",
+            "ValidPassword123!");
+
+        _userManagerMock
+            .Setup(manager => manager.CreateAsync(
+                It.IsAny<ApplicationUser>(),
+                request.Password))
+            .ReturnsAsync(IdentityResult.Success);
+
+        _userRepositoryMock
+            .Setup(repository => repository.AddAsync(
+                It.IsAny<DomainUser>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
+        var response = await _userService.RegisterUserAsync(request);
+
+        // Assert
+        Assert.NotEqual(Guid.Empty, response.Id);
+        Assert.Equal("nuno@example.com", response.Email);
+        Assert.Equal("nuno", response.Username);
+        Assert.NotEqual(default, response.CreatedAt);
+
+        _userManagerMock.Verify(
+            manager => manager.CreateAsync(
+                It.Is<ApplicationUser>(user =>
+                    user.Email == "nuno@example.com" &&
+                    user.UserName == "nuno"),
+                request.Password),
+            Times.Once);
+
+        _userRepositoryMock.Verify(
+            repository => repository.AddAsync(
+                It.Is<DomainUser>(user =>
+                    user.Id == response.Id &&
+                    user.Email == response.Email &&
+                    user.Username == response.Username)),
+            Times.Once);
+    }
 }
