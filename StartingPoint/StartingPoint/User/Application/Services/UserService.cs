@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using StartingPoint.Common.Exceptions;
+using StartingPoint.User.Application.Authorization;
 using StartingPoint.User.Application.DTOs;
 using StartingPoint.User.Application.Exceptions;
 using StartingPoint.User.Application.Repositories;
@@ -38,6 +39,31 @@ public class UserService(
             throw new UserRegistrationException(
                 string.Join("; ", errors),
                 StatusCodes.Status400BadRequest);
+        }
+
+        var roleResult = await userManager.AddToRoleAsync(
+            applicationUser,
+            UserRoles.User);
+
+        if (!roleResult.Succeeded)
+        {
+            var errors = roleResult.Errors
+                .Select(error => error.Description)
+                .ToList();
+
+            var rollbackResult = await userManager.DeleteAsync(applicationUser);
+
+            if (!rollbackResult.Succeeded)
+            {
+                throw new UserRegistrationException(
+                    "Role assignment failed, and the Identity account could not " +
+                    "be rolled back. Manual reconciliation is required.",
+                    StatusCodes.Status500InternalServerError);
+            }
+
+            throw new UserRegistrationException(
+                string.Join("; ", errors),
+                StatusCodes.Status500InternalServerError);
         }
         
         

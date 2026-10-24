@@ -6,11 +6,11 @@ using StartingPoint.Trip.Infrastructure.Persistence;
 using StartingPoint.Trip.Infrastructure.Persistence.Repositories;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
+using StartingPoint.User.Application.Authorization;
 using StartingPoint.User.Application.Services;
 using StartingPoint.User.Infrastructure.Authentication;
 using StartingPoint.User.Infrastructure.Persistence;
 using StartingPoint.User.Application.Repositories;
-using StartingPoint.User.Infrastructure.Persistence;
 using StartingPoint.User.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +22,16 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(
             new JsonStringEnumConverter());
+    });
+
+builder.Services
+    .AddAuthentication()
+    .AddCookie(IdentityConstants.ApplicationScheme, options =>
+    {
+        options.Cookie.Name = "StartingPoint.Auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
 //Trips
@@ -42,9 +52,47 @@ builder.Services
         options.Password.RequireNonAlphanumeric = false;
     })
     .AddRoles<IdentityRole<Guid>>()
-    .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
+    .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+    .AddSignInManager();
+
 builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
-    options.UseInMemoryDatabase("StartingPoint"));
+{
+    options.UseInMemoryDatabase("StartingPoint");
+    options.UseOpenIddict<Guid>();
+});
+
+builder.Services.AddOpenIddict()
+    .AddCore(options =>
+    {
+        options.UseEntityFrameworkCore()
+            .UseDbContext<ApplicationIdentityDbContext>()
+            .ReplaceDefaultEntities<Guid>();
+    })
+    .AddServer(options =>
+    {
+        // Enable the authorization and token endpoints.
+        options.SetAuthorizationEndpointUris("/connect/authorize")
+            .SetTokenEndpointUris("/connect/token");
+
+        // Enable Authorization Code flow.
+        options.AllowAuthorizationCodeFlow();
+
+        // Require PKCE.
+        options.RequireProofKeyForCodeExchange();
+
+        // Development-only signing and encryption certificates.
+        options.AddDevelopmentSigningCertificate()
+            .AddDevelopmentEncryptionCertificate();
+
+        // Integrate OpenIddict with ASP.NET Core.
+        options.UseAspNetCore()
+            .EnableAuthorizationEndpointPassthrough();
+    })
+    .AddValidation(options =>
+    {
+        options.UseLocalServer();
+        options.UseAspNetCore();
+    });
 //User
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -68,6 +116,38 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider
+        .GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+
+    var roles = new[]
+    {
+        UserRoles.User,
+        UserRoles.Admin
+    };
+
+    foreach (var roleName in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            var result = await roleManager.CreateAsync(
+                new IdentityRole<Guid>(roleName));
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(
+                    "; ",
+                    result.Errors.Select(error => error.Description));
+
+                throw new InvalidOperationException(
+                    $"Failed to create role '{roleName}': {errors}");
+            }
+        }
+    }
+    
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -78,6 +158,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("Frontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

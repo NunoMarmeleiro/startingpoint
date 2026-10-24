@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using StartingPoint.Trip.Application.DTOs;
 using StartingPoint.Trip.Application.Services;
-using StartingPoint.Trip.Domain;
 
 namespace StartingPoint.Trip.Presentation;
 
@@ -34,6 +35,8 @@ public class TripController : ControllerBase
         return Ok(response);
     }
     
+    [Authorize(AuthenticationSchemes =
+        OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
     {

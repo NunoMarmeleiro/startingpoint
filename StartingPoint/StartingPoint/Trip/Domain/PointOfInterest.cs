@@ -6,7 +6,7 @@ public sealed class PointOfInterest
 {
     public Guid Id { get; private set; }
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } = null!;
 
     public string? Description { get; private set; }
 
@@ -18,7 +18,6 @@ public sealed class PointOfInterest
 
     private PointOfInterest()
     {
-        
     }
     private PointOfInterest(
         Guid id,
