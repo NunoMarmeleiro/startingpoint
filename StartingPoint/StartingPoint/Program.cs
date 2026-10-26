@@ -6,6 +6,7 @@ using StartingPoint.Trip.Infrastructure.Persistence;
 using StartingPoint.Trip.Infrastructure.Persistence.Repositories;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
+using StartingPoint.Authentication.Infrastructure;
 using StartingPoint.User.Application.Authorization;
 using StartingPoint.User.Application.Services;
 using StartingPoint.User.Infrastructure.Authentication;
@@ -25,7 +26,17 @@ builder.Services.AddControllers()
     });
 
 builder.Services
-    .AddAuthentication()
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme =
+            IdentityConstants.ApplicationScheme;
+
+        options.DefaultChallengeScheme =
+            IdentityConstants.ApplicationScheme;
+
+        options.DefaultSignInScheme =
+            IdentityConstants.ApplicationScheme;
+    })
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
         options.Cookie.Name = "StartingPoint.Auth";
@@ -96,6 +107,9 @@ builder.Services.AddOpenIddict()
 //User
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IdentityUserAuthenticationService>();
+builder.Services.AddScoped<IUserAuthorizationService, IdentityUserAuthorizationService>();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -146,6 +160,9 @@ using (var scope = app.Services.CreateScope())
         }
     }
     
+    await OpenIddictClientSeeder.SeedAsync(
+        scope.ServiceProvider,
+        app.Configuration);
 }
 
 // Configure the HTTP request pipeline.

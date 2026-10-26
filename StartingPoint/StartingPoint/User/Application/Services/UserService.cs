@@ -10,7 +10,9 @@ namespace StartingPoint.User.Application.Services;
 
 public class UserService(
     UserManager<ApplicationUser> userManager,
-    IUserRepository userRepository)
+    IUserRepository userRepository,
+    IdentityUserAuthenticationService identityUserAuthenticationService
+    )
 {
     public async Task<UserResponseDTO> RegisterUserAsync(
         RegisterUserRequestDTO request)
@@ -99,5 +101,12 @@ public class UserService(
         return user is null 
             ? throw new EntityNotFoundException(nameof(Domain.User), id) 
             : new UserResponseDTO(user.Id, user.Email,user.Username, user.CreatedAt);
+    }
+
+    public async Task<bool> LoginAsync(LoginUserRequestDTO request)
+    {
+        return await identityUserAuthenticationService.LoginAsync(
+            request.Email,
+            request.Password);
     }
 }

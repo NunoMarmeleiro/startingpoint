@@ -16,6 +16,7 @@ public class UserServiceTests
 {
     private readonly Mock<IUserRepository> _userRepositoryMock;
     private readonly Mock<UserManager<ApplicationUser>> _userManagerMock;
+    private readonly Mock<IdentityUserAuthenticationService> _identityUserAuthenticationServiceMock;
     private readonly UserService _userService;
 
     public UserServiceTests()
@@ -35,9 +36,12 @@ public class UserServiceTests
             null!,
             null!);
 
+        _identityUserAuthenticationServiceMock = new Mock<IdentityUserAuthenticationService>();
+
         _userService = new UserService(
             _userManagerMock.Object,
-            _userRepositoryMock.Object);
+            _userRepositoryMock.Object,
+            _identityUserAuthenticationServiceMock.Object);
     }
 
     [Fact]

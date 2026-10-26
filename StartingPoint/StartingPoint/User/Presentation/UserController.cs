@@ -25,4 +25,23 @@ public class UserController(
         var result = await userService.GetById(id);
         return Ok(result);
     }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginUserRequestDTO request)
+    {
+        var succeeded = await userService.LoginAsync(request);
+
+        if (!succeeded)
+        {
+            return Unauthorized(new
+            {
+                message = "Invalid email or password."
+            });
+        }
+
+        return Ok(new
+        {
+            message = "Login successful."
+        });
+    }
 }
