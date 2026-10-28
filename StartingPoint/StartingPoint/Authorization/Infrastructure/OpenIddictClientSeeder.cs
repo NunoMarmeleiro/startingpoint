@@ -1,6 +1,6 @@
 using OpenIddict.Abstractions;
 
-namespace StartingPoint.Authentication.Infrastructure;
+namespace StartingPoint.Authorization.Infrastructure;
 
 public static class OpenIddictClientSeeder
 {

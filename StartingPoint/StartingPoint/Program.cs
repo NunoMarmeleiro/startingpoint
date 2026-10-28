@@ -6,13 +6,16 @@ using StartingPoint.Trip.Infrastructure.Persistence;
 using StartingPoint.Trip.Infrastructure.Persistence.Repositories;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
-using StartingPoint.Authentication.Infrastructure;
-using StartingPoint.User.Application.Authorization;
+using StartingPoint.Authentication.Application.Services;
+using StartingPoint.Authorization.Application;
+using StartingPoint.Authorization.Application.Services;
+using StartingPoint.Authorization.Infrastructure;
 using StartingPoint.User.Application.Services;
 using StartingPoint.User.Infrastructure.Authentication;
 using StartingPoint.User.Infrastructure.Persistence;
 using StartingPoint.User.Application.Repositories;
 using StartingPoint.User.Infrastructure.Persistence.Repositories;
+using StartingPoint.User.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,7 +54,17 @@ builder.Services.AddDbContext<TripDbContext>(options =>
 builder.Services.AddScoped<ITripRepository, TripRepository>();
 builder.Services.AddScoped<TripService>();
 
-//ApplicationUser
+//Users
+builder.Services.AddDbContext<UserDbContext>(options =>
+{
+    options.UseInMemoryDatabase("StartingPoint");
+    options.UseOpenIddict<Guid>();
+});
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+//Authentication
+builder.Services.AddScoped<IdentityUserAuthenticationService>();
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {
@@ -72,6 +85,8 @@ builder.Services.AddDbContext<ApplicationIdentityDbContext>(options =>
     options.UseOpenIddict<Guid>();
 });
 
+//Authorization
+builder.Services.AddScoped<IdentityUserAuthorizationService>();
 builder.Services.AddOpenIddict()
     .AddCore(options =>
     {
@@ -104,12 +119,6 @@ builder.Services.AddOpenIddict()
         options.UseLocalServer();
         options.UseAspNetCore();
     });
-//User
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IdentityUserAuthenticationService>();
-builder.Services.AddScoped<IUserAuthorizationService, IdentityUserAuthorizationService>();
-
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -130,6 +139,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+
+//Authorization Roles
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider
@@ -137,8 +148,8 @@ using (var scope = app.Services.CreateScope())
 
     var roles = new[]
     {
-        UserRoles.User,
-        UserRoles.Admin
+        ApplicationUserRoles.User,
+        ApplicationUserRoles.Admin
     };
 
     foreach (var roleName in roles)

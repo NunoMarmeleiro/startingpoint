@@ -1,20 +1,20 @@
-
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
-using StartingPoint.User.Application.Authorization;
-using Microsoft.AspNetCore;
+using StartingPoint.Authorization.Application.Services;
 
-namespace StartingPoint.Authentication.Presentation;
+namespace StartingPoint.Authorization.Presentation;
 
 [ApiController]
+[Route("connect")]
 public class AuthorizationController(
-    IUserAuthorizationService userAuthorizationService) : Controller
+    IdentityUserAuthorizationService userAuthorizationService) : ControllerBase
 {
-    [HttpGet("~/connect/authorize")]
-    [HttpPost("~/connect/authorize")]
+    [HttpGet("authorize")]
+    [HttpPost("authorize")]
     public async Task<IActionResult> Authorize()
     {
         var request = HttpContext.GetOpenIddictServerRequest()
@@ -68,7 +68,7 @@ public class AuthorizationController(
     }
     
     
-    [HttpPost("~/connect/token")]
+    [HttpPost("token")]
     public async Task<IActionResult> Exchange()
     {
         var request = HttpContext.GetOpenIddictServerRequest()

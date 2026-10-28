@@ -8,20 +8,13 @@ namespace StartingPoint.Trip.Presentation;
 
 [ApiController]
 [Route("api/trips")]
-public class TripController : ControllerBase
+public class TripController(TripService tripService) : ControllerBase
 {
-    private readonly TripService _tripService;
-    
-    public TripController(TripService tripService)
-    {
-        _tripService =  tripService;
-    }
-    
     [HttpPost]
     public async Task<ActionResult<TripResponseDTO>> CreateTrip(
         CreateTripRequestDTO request)
     {
-        var response = await _tripService.CreateTrip(request);
+        var response = await tripService.CreateTrip(request);
         return CreatedAtAction(
             nameof(GetTripById),
             new { id = response.Id },
@@ -31,7 +24,7 @@ public class TripController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<TripResponseDTO>> GetTripById(Guid id)
     {
-        var response = await _tripService.GetTripById(id);
+        var response = await tripService.GetTripById(id);
         return Ok(response);
     }
     
@@ -40,7 +33,7 @@ public class TripController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
     {
-        var trips = await _tripService.GetAllTrips();
+        var trips = await tripService.GetAllTrips();
         return Ok(trips);
     }
     
@@ -49,7 +42,7 @@ public class TripController : ControllerBase
         Guid id,
         UpdateTripRequestDTO request)
     {
-        var trip = await _tripService.UpdateTrip(id, request);
+        var trip = await tripService.UpdateTrip(id, request);
         return Ok(trip);
     }
     
@@ -58,7 +51,7 @@ public class TripController : ControllerBase
         Guid tripId,
         AddPointOfInterestRequestDTO request)
     {
-        await _tripService.AddPointOfInterest(
+        await tripService.AddPointOfInterest(
             tripId,
             request.Name,
             request.Category,
@@ -75,7 +68,7 @@ public class TripController : ControllerBase
         Guid pointOfInterestId,
         UpdatePointOfInterestRequestDTO request)
     {
-        await _tripService.UpdatePointOfInterest(
+        await tripService.UpdatePointOfInterest(
             tripId,
             pointOfInterestId,
             request.Name,
@@ -92,7 +85,7 @@ public class TripController : ControllerBase
         Guid tripId,
         Guid pointOfInterestId)
     {
-        await _tripService.DeletePointOfInterest(
+        await tripService.DeletePointOfInterest(
             tripId,
             pointOfInterestId);
 
@@ -102,7 +95,7 @@ public class TripController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
-        await _tripService.DeleteTrip(id);
+        await tripService.DeleteTrip(id);
 
         return NoContent();
     }

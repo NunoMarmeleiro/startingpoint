@@ -1,14 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
-using StartingPoint.User.Application.Authorization;
 using StartingPoint.User.Infrastructure.Authentication;
 
-namespace StartingPoint.User.Application.Services;
+namespace StartingPoint.Authorization.Application.Services;
 
 public class IdentityUserAuthorizationService(
     UserManager<ApplicationUser> userManager,
-    SignInManager<ApplicationUser> signInManager) : IUserAuthorizationService
+    SignInManager<ApplicationUser> signInManager)
 {
     public async Task<ClaimsPrincipal?> CreatePrincipalAsync(
         ClaimsPrincipal authenticatedUser)

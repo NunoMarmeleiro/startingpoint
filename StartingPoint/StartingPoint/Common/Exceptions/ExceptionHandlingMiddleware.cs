@@ -1,22 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using StartingPoint.User.Application.Exceptions;
+using StartingPoint.Authentication.Application.Exceptions;
 
 namespace StartingPoint.Common.Exceptions;
 
-public class ExceptionHandlingMiddleware
+public class ExceptionHandlingMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (EntityNotFoundException ex)
         {
@@ -30,10 +23,32 @@ public class ExceptionHandlingMiddleware
         {
             await HandleUserRegistrationException(context, ex);
         }
+        catch (UserLoginException ex)
+        {
+            await HandleApplicationUserNotFoundException(context, ex);
+        }
         catch (Exception)
         {
             await HandleUnexpectedExceptionAsync(context);
         }
+    }
+
+    private static async Task HandleApplicationUserNotFoundException(
+        HttpContext context, 
+        UserLoginException exception
+        )
+    {
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status401Unauthorized,
+            Title = "Login failed",
+            Detail = exception.Message,
+            Instance = context.Request.Path
+        };
+
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
 
     private static async Task HandleUnexpectedExceptionAsync(
