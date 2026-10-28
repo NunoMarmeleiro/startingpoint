@@ -102,9 +102,15 @@ builder.Services.AddOpenIddict()
 
         // Enable Authorization Code flow.
         options.AllowAuthorizationCodeFlow();
+        
+        //Enable Refresh Token
+        options.AllowRefreshTokenFlow();
 
         // Require PKCE.
         options.RequireProofKeyForCodeExchange();
+        
+        //Set Refresh Token Lifetime
+        options.SetRefreshTokenLifetime(TimeSpan.FromDays(14));
 
         // Development-only signing and encryption certificates.
         options.AddDevelopmentSigningCertificate()
@@ -113,6 +119,9 @@ builder.Services.AddOpenIddict()
         // Integrate OpenIddict with ASP.NET Core.
         options.UseAspNetCore()
             .EnableAuthorizationEndpointPassthrough();
+        
+        
+       
     })
     .AddValidation(options =>
     {
