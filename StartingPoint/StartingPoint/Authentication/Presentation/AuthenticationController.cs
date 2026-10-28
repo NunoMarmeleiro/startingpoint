@@ -26,6 +26,13 @@ public class AuthenticationController(
         await identityUserAuthenticationService.LoginAsync(request);
         return Ok();
     }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await identityUserAuthenticationService.LogoutAsync();
+        return Ok();
+    }
     
     [Authorize]
     [HttpGet("me")]
