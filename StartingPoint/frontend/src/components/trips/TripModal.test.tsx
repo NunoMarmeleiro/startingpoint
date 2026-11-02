@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 import { toast } from "sonner"
 import TripModal from "./TripModal"
-import type { Trip } from "../../models/Trip"
+import type { Trip } from "../../models/trips/Trip"
 
 vi.mock("../../services/tripService", () => ({
     createTrip: vi.fn(),

@@ -11,7 +11,8 @@ namespace StartingPoint.Authentication.Application.Services;
 public class IdentityUserAuthenticationService(
     UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
-    IUserService domainUserService)
+    IUserService domainUserService,
+    IHttpContextAccessor httpContextAccessor)
     
 {
     
@@ -111,5 +112,21 @@ public class IdentityUserAuthenticationService(
     public async Task LogoutAsync()
     {
         await signInManager.SignOutAsync();
+    }
+    
+    public async Task<CurrentUserResponseDTO> GetCurrentUserAsync()
+    {
+        var applicationUser = await signInManager.UserManager.GetUserAsync(
+            httpContextAccessor.HttpContext!.User
+        );
+
+        if (applicationUser is null)
+            throw new UserNotLoggedInException();
+
+        return new CurrentUserResponseDTO(
+            applicationUser.Id,
+            applicationUser.Email!,
+            applicationUser.UserName!
+        );
     }
 }

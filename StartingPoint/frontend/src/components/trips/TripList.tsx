@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { Trip } from "../../models/Trip"
+import type { Trip } from "../../models/trips/Trip"
 import { getTrips } from "../../services/tripService"
 import { toast } from "sonner"
 import TripCard from "./TripCard"

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import type { Trip } from "../../models/Trip"
+import type { Trip } from "../../models/trips/Trip"
 import "./TripCard.css"
 
 type TripCardProps = {

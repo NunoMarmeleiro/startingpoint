@@ -42,7 +42,9 @@ export function getErrorMessage(error: unknown): string {
         case 409:
             return data?.detail ??
                 "This action conflicts with the current state."
-
+        case 401:
+            return data?.detail ??
+                "Unauthorized"
         default:
             return "Something went wrong. Please try again."
     }

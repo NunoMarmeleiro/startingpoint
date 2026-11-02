@@ -27,10 +27,29 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         {
             await HandleApplicationUserNotFoundException(context, ex);
         }
+        catch (UserNotLoggedInException ex)
+        {
+            await HandleUserNotLoggedInException(context, ex);
+        }
         catch (Exception)
         {
             await HandleUnexpectedExceptionAsync(context);
         }
+    }
+
+    private async Task HandleUserNotLoggedInException(HttpContext context, UserNotLoggedInException exception)
+    {
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status401Unauthorized,
+            Title = "User not logged in",
+            Detail = exception.Message,
+            Instance = context.Request.Path
+        };
+
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
 
     private static async Task HandleApplicationUserNotFoundException(

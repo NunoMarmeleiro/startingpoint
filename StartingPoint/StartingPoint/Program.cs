@@ -65,6 +65,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 //Authentication
 builder.Services.AddScoped<IdentityUserAuthenticationService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {
@@ -142,7 +143,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 

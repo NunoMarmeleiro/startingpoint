@@ -1,4 +1,4 @@
-import type { PointOfInterest } from "./PointOfInterest"
+import type { PointOfInterest } from "../pois/PointOfInterest"
 
 export type Trip = {
     id: string

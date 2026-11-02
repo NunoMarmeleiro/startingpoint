@@ -2,6 +2,10 @@ import { Routes, Route } from "react-router-dom"
 import TripList from "./components/trips/TripList"
 import TripDetailsPage from "./pages/trips/TripDetailsPage"
 import { Toaster } from "sonner"
+import LoginPage from "./pages/authentication/LoginPage.tsx";
+import RegisterPage from "./pages/authentication/RegisterPage.tsx";
+import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
+import PublicRoute from "./components/authentication/PublicRoute.tsx";
 
 function App() {
     return (
@@ -11,8 +15,15 @@ function App() {
                 richColors 
             />
             <Routes>
-                <Route path="/" element={<TripList />} />
-                <Route path="/trips/:id" element={<TripDetailsPage />} />
+                <Route element={<PublicRoute />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                </Route>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={<TripList />} />
+                    <Route path="/trips/:id" element={<TripDetailsPage />} />
+                </Route>
+                
             </Routes>
         </main>
     )

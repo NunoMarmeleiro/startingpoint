@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react"
 import {MemoryRouter, useLocation} from "react-router-dom"
 import { describe, expect, it } from "vitest"
 import TripCard from "./TripCard"
-import type { Trip } from "../../models/Trip"
+import type { Trip } from "../../models/trips/Trip"
 import userEvent from "@testing-library/user-event";
 
 describe("TripCard", () => {

@@ -36,8 +36,10 @@ public class AuthenticationController(
     
     [Authorize]
     [HttpGet("me")]
-    public IActionResult Me()
+    public async Task<IActionResult> GetCurrentUser()
     {
-        return Ok(User.Identity?.IsAuthenticated);
+        var user = await identityUserAuthenticationService.GetCurrentUserAsync();
+
+        return Ok(user);
     }
 }

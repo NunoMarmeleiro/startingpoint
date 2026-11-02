@@ -8,7 +8,7 @@ import {
     type POICategory,
     poiCategoryMetadata, 
     type PointOfInterest
-} from "../../models/PointOfInterest"
+} from "../../models/pois/PointOfInterest"
 import "./POIModal.css"
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 
