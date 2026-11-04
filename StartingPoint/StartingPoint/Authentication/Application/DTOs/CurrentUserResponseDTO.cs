@@ -1,4 +1,4 @@
-namespace StartingPoint.User.Application.DTOs;
+namespace StartingPoint.Authentication.Application.DTOs;
 
 public record CurrentUserResponseDTO(
     Guid Id,

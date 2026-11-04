@@ -6,8 +6,10 @@ import {
     type ReactNode,
 } from "react"
 
-import type { LoginUserRequest } from "../models/authentication/LoginUserRequest"
-import type { CurrentUserResponse } from "../models/authentication/CurrentUserResponse"
+import type { 
+    LoginUserRequest, 
+    CurrentUserResponse 
+} from "../models/authentication/ApplicationUser"
 
 import {
     login as loginRequest,
@@ -52,7 +54,7 @@ export function AuthenticationProvider({
         await logoutRequest()
         setUser(null)
     }
-
+    
     useEffect(() => {
         async function loadUser() {
             try {

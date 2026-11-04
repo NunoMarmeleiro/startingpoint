@@ -65,13 +65,13 @@
 }
 
 .login-form-group input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-input-box-shadow);
 }
 
 .login-error {
     margin: 0;
-    color: #dc2626;
+    color: var(--color-danger);
     font-size: 13px;
 }
 

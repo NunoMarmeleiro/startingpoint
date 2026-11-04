@@ -6,6 +6,7 @@ import LoginPage from "./pages/authentication/LoginPage.tsx";
 import RegisterPage from "./pages/authentication/RegisterPage.tsx";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import PublicRoute from "./components/authentication/PublicRoute.tsx";
+import MainLayout from "./components/layout/MainLayout.tsx";
 
 function App() {
     return (
@@ -20,8 +21,10 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                 </Route>
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/" element={<TripList />} />
-                    <Route path="/trips/:id" element={<TripDetailsPage />} />
+                    <Route element={<MainLayout />}>
+                        <Route path="/" element={<TripList />} />
+                        <Route path="/trips/:id" element={<TripDetailsPage />} />
+                    </Route>
                 </Route>
                 
             </Routes>

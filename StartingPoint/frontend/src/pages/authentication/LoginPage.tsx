@@ -1,11 +1,11 @@
 import { useState } from "react";
 import type { SyntheticEvent } from "react";
-import type { LoginUserRequest } from "../../models/authentication/LoginUserRequest.ts";
+import type { LoginUserRequest } from "../../models/authentication/ApplicationUser";
 import * as React from "react";
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import {toast} from "sonner";
 import { useAuthentication } from "../../contexts/AuthenticationContext"
-import { useNavigate } from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import "./LoginPage.css"
 
 export default function LoginPage() {
@@ -78,7 +78,7 @@ export default function LoginPage() {
                 </form>
 
                 <div className="login-footer">
-                    <p>Don't have an account? <a href={"/register"}>Register</a></p>
+                    <p>Don't have an account? <Link to="/register">Register</Link></p>
                 </div>
             </div>
         </div>

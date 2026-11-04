@@ -37,7 +37,7 @@
 }
 
 .modal {
-    width: min(1200px, calc(100% - 2rem));
+    width: min(1000px, calc(100% - 2rem));
     height: calc(100vh - var(--spacing-xl));
     margin: var(--spacing-xl) auto 0;
     padding: var(--spacing-xl);
@@ -164,7 +164,7 @@
 .modal__field select:focus,
 .modal__field textarea:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgb(37 99 235 / 10%);
+    box-shadow: 0 0 0 3px var(--color-input-box-shadow);
 }
 
 .modal__field input::placeholder,

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StartingPoint.Authentication.Application.DTOs;
 using StartingPoint.Authentication.Application.Services;
 using StartingPoint.User.Application.DTOs;
 using StartingPoint.User.Application.Services;

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using StartingPoint.Authentication.Application.DTOs;
 using StartingPoint.Authentication.Application.Exceptions;
 using StartingPoint.Authorization.Application;
 using StartingPoint.Common.Exceptions;

@@ -1,6 +1,9 @@
 import apiClient from "./apiClient"
-import type { LoginUserRequest } from "../models/authentication/LoginRequest"
-import type {CurrentUserResponse} from "../models/authentication/CurrentUserResponse.ts";
+import type { 
+    LoginUserRequest, 
+    CurrentUserResponse,
+    RegisterUserRequest
+} from "../models/authentication/ApplicationUser"
 
 export async function login(
     request: LoginUserRequest
@@ -15,6 +18,11 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
     const response = await apiClient.get<CurrentUserResponse>(
         "/api/auth/me"
     )
-
     return response.data
+}
+
+export async function register(
+    request: RegisterUserRequest
+): Promise<void> {
+    await apiClient.post("/api/auth/register", request)
 }
