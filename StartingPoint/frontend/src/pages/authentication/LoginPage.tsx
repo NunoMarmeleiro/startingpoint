@@ -5,14 +5,14 @@ import * as React from "react";
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import {toast} from "sonner";
 import { useAuthentication } from "../../contexts/AuthenticationContext"
-import {Link, useNavigate} from "react-router-dom"
+import {Link} from "react-router-dom"
 import "./LoginPage.css"
+import {startAuthorization} from "../../services/authorization/authorization.ts";
 
 export default function LoginPage() {
-    const navigate = useNavigate()
     const { login } = useAuthentication()
     const [formData, setFormData] = useState<LoginUserRequest>({
-        email: "",
+        emailOrUsername: "",
         password: ""
     });
 
@@ -31,7 +31,7 @@ export default function LoginPage() {
         try {
             await login(formData)
 
-            navigate("/")
+            await startAuthorization()
         } catch (error: unknown) {
             toast.error(getErrorMessage(error))
         }
@@ -47,12 +47,11 @@ export default function LoginPage() {
 
                 <form className="login-form" onSubmit={handleSubmit}>
                     <div className="login-form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="emailOrUsername">Email or username</label>
                         <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
+                            id="emailOrUsername"
+                            name="emailOrUsername"
+                            value={formData.emailOrUsername}
                             onChange={handleChange}
                             placeholder="Enter your email"
                             required

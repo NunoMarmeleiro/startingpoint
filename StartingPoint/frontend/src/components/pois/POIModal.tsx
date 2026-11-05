@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useRef } from "react"
 import * as React from "react"
-import {addPointOfInterest, updatePointOfInterest} from "../../services/tripService"
+import {addPointOfInterest, updatePointOfInterest} from "../../services/trips/tripService"
 import { toast } from "sonner"
 import {
     type AddPointOfInterestRequest,

@@ -1,6 +1,6 @@
 import type { PointOfInterest } from "../pois/PointOfInterest"
 
-export type Trip = {
+export interface Trip {
     id: string
     name: string
     destination: string
@@ -9,14 +9,14 @@ export type Trip = {
     pointsOfInterest: PointOfInterest[]
 }
 
-export type CreateTripRequest = {
+export interface CreateTripRequest {
     name: string
     destination: string
     startDate: string
     endDate: string
 }
 
-export type UpdateTripRequest = {
+export interface UpdateTripRequest {
     name: string
     destination: string
     startDate: string

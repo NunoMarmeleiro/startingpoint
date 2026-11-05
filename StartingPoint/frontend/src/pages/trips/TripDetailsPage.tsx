@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react"
 import {Link, useNavigate, useParams} from "react-router-dom"
-import {deletePointOfInterest, deleteTrip, getTripById} from "../../services/tripService"
+import {deletePointOfInterest, deleteTrip, getTripById} from "../../services/trips/tripService"
 import { toast } from "sonner"
 import type {Trip} from "../../models/trips/Trip"
 import TripModal from "../../components/trips/TripModal"

@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 import { toast } from "sonner"
 import POIModal from "./POIModal"
-import {updatePointOfInterest} from "../../services/tripService.ts";
+import {updatePointOfInterest} from "../../services/trips/tripService.ts";
 
 vi.mock("../../services/tripService", () => ({
     addPointOfInterest: vi.fn(),
@@ -45,7 +45,7 @@ describe("AddPOIModal", () => {
 
         const {
             addPointOfInterest,
-        } = await import("../../services/tripService")
+        } = await import("../../services/trips/tripService")
 
         const addPointOfInterestMock = vi.mocked(
             addPointOfInterest
@@ -123,7 +123,7 @@ describe("AddPOIModal", () => {
 
         const {
             addPointOfInterest,
-        } = await import("../../services/tripService")
+        } = await import("../../services/trips/tripService")
 
         const addPointOfInterestMock = vi.mocked(
             addPointOfInterest
@@ -158,7 +158,7 @@ describe("AddPOIModal", () => {
 
         const {
             addPointOfInterest,
-        } = await import("../../services/tripService")
+        } = await import("../../services/trips/tripService")
 
         const addPointOfInterestMock = vi.mocked(
             addPointOfInterest

@@ -1,9 +1,9 @@
-import apiClient from "./apiClient"
+import apiClient from "../apiClient"
 import type { 
     LoginUserRequest, 
     CurrentUserResponse,
     RegisterUserRequest
-} from "../models/authentication/ApplicationUser"
+} from "../../models/authentication/ApplicationUser"
 
 export async function login(
     request: LoginUserRequest

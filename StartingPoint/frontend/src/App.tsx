@@ -7,6 +7,7 @@ import RegisterPage from "./pages/authentication/RegisterPage.tsx";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import PublicRoute from "./components/authentication/PublicRoute.tsx";
 import MainLayout from "./components/layout/MainLayout.tsx";
+import AuthenticationCallbackPage from "./pages/authentication/AuthenticationCallbackPage.tsx";
 
 function App() {
     return (
@@ -26,7 +27,10 @@ function App() {
                         <Route path="/trips/:id" element={<TripDetailsPage />} />
                     </Route>
                 </Route>
-                
+                <Route
+                    path="/auth/callback"
+                    element={<AuthenticationCallbackPage />}
+                />
             </Routes>
         </main>
     )

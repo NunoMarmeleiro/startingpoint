@@ -3,7 +3,7 @@ import type { SyntheticEvent, ChangeEvent } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner";
 import type { RegisterUserRequest } from "../../models/authentication/ApplicationUser"
-import { register } from "../../services/authenticationService"
+import { register } from "../../services/authentication/authenticationService"
 import { getErrorMessage } from "../../utils/getErrorMessages"
 import "./LoginPage.css"
 

@@ -93,11 +93,10 @@ public class IdentityUserAuthenticationService(
     }
     public async Task LoginAsync(LoginUserRequestDTO request)
     {
-        var email = request.Email.Trim();
+        var emailOrUsername = request.EmailOrUsername.Trim();
         var password = request.Password;
         var user = await signInManager.UserManager
-            .FindByEmailAsync(email);
-
+            .FindByEmailAsync(emailOrUsername) ?? await signInManager.UserManager.FindByNameAsync(emailOrUsername);
         if (user is null) throw new UserLoginException();
         
         var result = await signInManager.PasswordSignInAsync(

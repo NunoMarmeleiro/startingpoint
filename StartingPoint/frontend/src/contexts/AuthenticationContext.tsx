@@ -15,7 +15,7 @@ import {
     login as loginRequest,
     logout as logoutRequest,
     getCurrentUser,
-} from "../services/authenticationService"
+} from "../services/authentication/authenticationService"
 
 interface AuthenticationContextType {
     user: CurrentUserResponse | null

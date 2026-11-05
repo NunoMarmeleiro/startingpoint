@@ -1,15 +1,15 @@
-export type CurrentUserResponse = {
+export interface CurrentUserResponse {
     id: string
     email: string
     username: string
 }
 
-export type LoginUserRequest = {
-    email: string;
+export interface LoginUserRequest {
+    emailOrUsername: string;
     password: string;
 }
 
-export type RegisterUserRequest = {
+export interface RegisterUserRequest {
     email: string;
     password: string;
     username: string;

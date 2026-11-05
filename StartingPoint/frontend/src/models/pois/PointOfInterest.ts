@@ -61,7 +61,7 @@ export const poiCategoryMetadata: Record<
     },
 }
 
-export type PointOfInterest = {
+export interface PointOfInterest {
     id: string
     name: string
     description?: string
@@ -70,7 +70,7 @@ export type PointOfInterest = {
     notes?: string
 }
 
-export type AddPointOfInterestRequest = {
+export interface AddPointOfInterestRequest {
     name: string
     category: POICategory
     description?: string

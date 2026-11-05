@@ -66,7 +66,7 @@ describe("CreateTripModal", () => {
         }
 
         const updateTripMock = vi.mocked(
-            (await import("../../services/tripService")).updateTrip
+            (await import("../../services/trips/tripService")).updateTrip
         )
 
         updateTripMock.mockResolvedValue(updatedTrip)
@@ -130,7 +130,7 @@ describe("CreateTripModal", () => {
         }
 
         const updateTripMock = vi.mocked(
-            (await import("../../services/tripService")).updateTrip
+            (await import("../../services/trips/tripService")).updateTrip
         )
 
         const onUpdated = vi.fn()
@@ -181,7 +181,7 @@ describe("CreateTripModal", () => {
         }
 
         const updateTripMock = vi.mocked(
-            (await import("../../services/tripService")).updateTrip
+            (await import("../../services/trips/tripService")).updateTrip
         )
 
         updateTripMock.mockRejectedValue(new Error("API error"))

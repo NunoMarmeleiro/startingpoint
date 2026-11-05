@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import type { Trip } from "../../models/trips/Trip"
-import { getTrips } from "../../services/tripService"
+import { getTrips } from "../../services/trips/tripService"
 import { toast } from "sonner"
 import TripCard from "./TripCard"
 import "./TripList.css"
 import TripModal from "./TripModal"
-import { deleteTrip } from "../../services/tripService"
+import { deleteTrip } from "../../services/trips/tripService"
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import ConfirmDialog from "../../common/ConfirmDialog.tsx";
 
