@@ -16,6 +16,10 @@ import {
     logout as logoutRequest,
     getCurrentUser,
 } from "../services/authentication/authenticationService"
+import {
+    clearTokens,
+    setAuthenticationFailureHandler
+} from "../services/authentication/tokenManager.ts";
 
 interface AuthenticationContextType {
     user: CurrentUserResponse | null
@@ -40,6 +44,16 @@ export function AuthenticationProvider({
     const [user, setUser] = useState<CurrentUserResponse | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
+    useEffect(() => {
+        setAuthenticationFailureHandler(() => {
+            setUser(null)
+        })
+
+        return () => {
+            setAuthenticationFailureHandler(() => {})
+        }
+    }, [])
+    
     async function refreshUser() {
         const currentUser = await getCurrentUser()
         setUser(currentUser)
@@ -51,8 +65,13 @@ export function AuthenticationProvider({
     }
 
     async function logout() {
-        await logoutRequest()
-        setUser(null)
+        clearTokens()
+
+        try {
+            await logoutRequest()
+        } finally {
+            setUser(null)
+        }
     }
     
     useEffect(() => {

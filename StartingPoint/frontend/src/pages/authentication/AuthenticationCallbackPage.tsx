@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
+import { saveTokens } from "../../services/authentication/tokenManager"
 
 import { exchangeAuthorizationCode } from "../../services/authentication/tokenService"
 
@@ -34,13 +35,7 @@ export default function AuthenticationCallbackPage() {
 
                 const expectedState = sessionStorage.getItem(STATE_KEY)
                 const codeVerifier = sessionStorage.getItem(CODE_VERIFIER_KEY)
-                console.log("OAuth callback parameters:", {
-                    codeReceived: !!code,
-                    returnedState,
-                    expectedState: sessionStorage.getItem(STATE_KEY),
-                    codeVerifierExists: !!sessionStorage.getItem(CODE_VERIFIER_KEY),
-                    currentUrl: window.location.href
-                })
+                
                 if (!code || !returnedState || returnedState !== expectedState) {
                     throw new Error("Invalid OAuth callback state.")
                 }
@@ -57,12 +52,7 @@ export default function AuthenticationCallbackPage() {
                 sessionStorage.removeItem(STATE_KEY)
                 sessionStorage.removeItem(CODE_VERIFIER_KEY)
 
-                // Temporary: we will implement proper token management next.
-                sessionStorage.setItem("access_token", tokens.access_token)
-
-                if (tokens.refresh_token) {
-                    sessionStorage.setItem("refresh_token", tokens.refresh_token)
-                }
+                saveTokens(tokens)
 
                 //toast.success("Authentication successful")
                 navigate("/", { replace: true })
