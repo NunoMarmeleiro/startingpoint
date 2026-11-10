@@ -37,6 +37,7 @@ export function clearTokens(): void {
 }
 
 export async function refreshAccessToken(): Promise<string | null> {
+
     if (refreshPromise) {
         return refreshPromise
     }
@@ -44,11 +45,11 @@ export async function refreshAccessToken(): Promise<string | null> {
     const refreshToken = sessionStorage.getItem(REFRESH_TOKEN_KEY)
 
     if (!refreshToken) {
-        onAuthenticationFailure?.()
         clearTokens()
+        onAuthenticationFailure?.()
         return null
     }
-
+    
     refreshPromise = (async () => {
         try {
             const tokens = await requestRefresh({ refreshToken })
@@ -59,8 +60,9 @@ export async function refreshAccessToken(): Promise<string | null> {
             })
 
             return tokens.access_token
-        } catch {
+        } catch (error) {
             clearTokens()
+            onAuthenticationFailure?.()
             return null
         } finally {
             refreshPromise = null

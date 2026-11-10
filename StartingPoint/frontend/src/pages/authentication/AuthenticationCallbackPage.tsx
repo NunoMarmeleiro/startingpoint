@@ -4,6 +4,7 @@ import { toast } from "sonner"
 import { saveTokens } from "../../services/authentication/tokenManager"
 
 import { exchangeAuthorizationCode } from "../../services/authentication/tokenService"
+import { useAuthentication } from "../../contexts/AuthenticationContext"
 
 const STATE_KEY = "oauth_state"
 const CODE_VERIFIER_KEY = "oauth_code_verifier"
@@ -12,7 +13,8 @@ export default function AuthenticationCallbackPage() {
     const navigate = useNavigate()
     const hasProcessedCallback = useRef(false)
     const [error, setError] = useState<string | null>(null)
-
+    const { refreshUser } = useAuthentication()
+    
     useEffect(() => {
         if (hasProcessedCallback.current) {
             return
@@ -54,7 +56,7 @@ export default function AuthenticationCallbackPage() {
 
                 saveTokens(tokens)
 
-                //toast.success("Authentication successful")
+                await refreshUser()
                 navigate("/", { replace: true })
             } catch (error: unknown) {
                 const message = error instanceof Error

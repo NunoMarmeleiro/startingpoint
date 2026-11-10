@@ -46,7 +46,8 @@ export function AuthenticationProvider({
 
     useEffect(() => {
         setAuthenticationFailureHandler(() => {
-            setUser(null)
+            console.error("[Authentication] Refresh failure triggered logout")
+            void logout()
         })
 
         return () => {
@@ -61,7 +62,6 @@ export function AuthenticationProvider({
 
     async function login(request: LoginUserRequest) {
         await loginRequest(request)
-        await refreshUser()
     }
 
     async function logout() {

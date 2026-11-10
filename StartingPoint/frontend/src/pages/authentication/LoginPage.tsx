@@ -30,7 +30,6 @@ export default function LoginPage() {
 
         try {
             await login(formData)
-
             await startAuthorization()
         } catch (error: unknown) {
             toast.error(getErrorMessage(error))
