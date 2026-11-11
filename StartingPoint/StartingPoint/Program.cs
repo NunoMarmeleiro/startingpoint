@@ -5,7 +5,10 @@ using StartingPoint.Trip.Application.Services;
 using StartingPoint.Trip.Infrastructure.Persistence;
 using StartingPoint.Trip.Infrastructure.Persistence.Repositories;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using OpenIddict.Abstractions;
+using OpenIddict.Validation.AspNetCore;
 using StartingPoint.Authentication.Application.Services;
 using StartingPoint.Authorization.Application;
 using StartingPoint.Authorization.Application.Services;
@@ -31,14 +34,8 @@ builder.Services.AddControllers()
 builder.Services
     .AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme =
-            IdentityConstants.ApplicationScheme;
-
-        options.DefaultChallengeScheme =
-            IdentityConstants.ApplicationScheme;
-
-        options.DefaultSignInScheme =
-            IdentityConstants.ApplicationScheme;
+        options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
     })
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
@@ -46,7 +43,21 @@ builder.Services
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.SameSite = SameSiteMode.Lax;
+
+        // Never redirect API calls; let the authorize endpoint decide where to send the user.
+        options.Events.OnRedirectToLogin = ctx =>
+        {
+            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        };
     });
+
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build())
+    .AddPolicy("User", p => p.RequireRole(ApplicationUserRoles.User))
+    .AddPolicy("Admin", p => p.RequireRole(ApplicationUserRoles.Admin));
 
 //Trips
 builder.Services.AddDbContext<TripDbContext>(options =>
@@ -58,7 +69,6 @@ builder.Services.AddScoped<TripService>();
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
     options.UseInMemoryDatabase("StartingPoint");
-    options.UseOpenIddict<Guid>();
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -69,6 +79,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {
+        options.ClaimsIdentity.UserIdClaimType = OpenIddictConstants.Claims.Subject;
+        options.ClaimsIdentity.UserNameClaimType = OpenIddictConstants.Claims.Name;
+        options.ClaimsIdentity.RoleClaimType = OpenIddictConstants.Claims.Role;
         options.User.RequireUniqueEmail = true;
         options.Password.RequiredLength = 12;
         options.Password.RequireDigit = false;
@@ -99,7 +112,8 @@ builder.Services.AddOpenIddict()
     {
         // Enable the authorization and token endpoints.
         options.SetAuthorizationEndpointUris("/connect/authorize")
-            .SetTokenEndpointUris("/connect/token");
+            .SetTokenEndpointUris("/connect/token")
+            .SetEndSessionEndpointUris("/connect/logout");
 
         // Enable Authorization Code flow.
         options.AllowAuthorizationCodeFlow();
@@ -119,15 +133,15 @@ builder.Services.AddOpenIddict()
 
         // Integrate OpenIddict with ASP.NET Core.
         options.UseAspNetCore()
-            .EnableAuthorizationEndpointPassthrough();
-        
-        
-       
+            .EnableAuthorizationEndpointPassthrough()
+            .EnableEndSessionEndpointPassthrough();
     })
     .AddValidation(options =>
     {
         options.UseLocalServer();
         options.UseAspNetCore();
+        options.EnableAuthorizationEntryValidation();
+        options.EnableTokenEntryValidation();
     });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -193,15 +207,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
-
 app.UseCors("Frontend");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 app.MapControllers();
 
 app.Run();

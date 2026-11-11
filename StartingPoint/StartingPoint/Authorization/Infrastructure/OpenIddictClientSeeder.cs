@@ -15,13 +15,13 @@ public static class OpenIddictClientSeeder
         var redirectUri = configuration["OpenIddict:Frontend:RedirectUri"]
                           ?? throw new InvalidOperationException(
                               "OpenIddict frontend RedirectUri is not configured.");
+        
+        var postLogoutUri = configuration["OpenIddict:Frontend:PostLogoutRedirectUri"]
+                            ?? throw new InvalidOperationException("PostLogoutRedirectUri is not configured.");
 
         var manager = services.GetRequiredService<IOpenIddictApplicationManager>();
 
-        if (await manager.FindByClientIdAsync(clientId) is not null)
-        {
-            return;
-        }
+        
 
         var descriptor = new OpenIddictApplicationDescriptor
         {
@@ -32,19 +32,27 @@ public static class OpenIddictClientSeeder
         };
 
         descriptor.RedirectUris.Add(new Uri(redirectUri));
+        descriptor.PostLogoutRedirectUris.Add(new Uri(postLogoutUri));
 
         descriptor.Permissions.UnionWith(
         [
             OpenIddictConstants.Permissions.Endpoints.Authorization,
             OpenIddictConstants.Permissions.Endpoints.Token,
+            OpenIddictConstants.Permissions.Endpoints.EndSession,
             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
             OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
             OpenIddictConstants.Permissions.ResponseTypes.Code,
             OpenIddictConstants.Permissions.Scopes.Email,
             OpenIddictConstants.Permissions.Scopes.Profile,
             OpenIddictConstants.Permissions.Scopes.Roles,
+            OpenIddictConstants.Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OfflineAccess,
+            
         ]);
 
-        await manager.CreateAsync(descriptor);
+        var existing = await manager.FindByClientIdAsync(clientId);
+        if (existing is null)
+            await manager.CreateAsync(descriptor);
+        else
+            await manager.UpdateAsync(existing, descriptor);
     }
 }

@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
@@ -9,12 +11,12 @@ using StartingPoint.Authorization.Application.Services;
 namespace StartingPoint.Authorization.Presentation;
 
 [ApiController]
-[Route("connect")]
 public class AuthorizationController(
     IdentityUserAuthorizationService userAuthorizationService) : ControllerBase
 {
-    [HttpGet("authorize")]
-    [HttpPost("authorize")]
+    [HttpGet("~/connect/authorize")]
+    [HttpPost("~/connect/authorize")]
+    [AllowAnonymous]
     public async Task<IActionResult> Authorize()
     {
         var request = HttpContext.GetOpenIddictServerRequest()
@@ -68,7 +70,8 @@ public class AuthorizationController(
     }
     
     
-    [HttpPost("token")]
+    [HttpPost("~/connect/token")]
+    [AllowAnonymous]
     public async Task<IActionResult> Exchange()
     {
         var request = HttpContext.GetOpenIddictServerRequest()
@@ -95,6 +98,24 @@ public class AuthorizationController(
         return SignIn(
             principal,
             OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("~/connect/logout")]
+    [HttpPost("~/connect/logout")]
+    public async Task<IActionResult> Logout()
+    {
+        // Read the cookie principal BEFORE signing out.
+        var cookie = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
+
+        if (cookie.Principal is not null)
+            await userAuthorizationService.RevokeAllSessionsAsync(cookie.Principal);
+
+        await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+        return SignOut(
+            authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+            properties: new AuthenticationProperties { RedirectUri = "/" });
     }
 
 }

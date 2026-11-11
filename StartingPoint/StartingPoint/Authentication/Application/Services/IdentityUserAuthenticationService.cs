@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using OpenIddict.Abstractions;
 using StartingPoint.Authentication.Application.DTOs;
 using StartingPoint.Authentication.Application.Exceptions;
 using StartingPoint.Authorization.Application;
@@ -108,25 +109,20 @@ public class IdentityUserAuthenticationService(
         if (!result.Succeeded) throw new UserLoginException();
     }
     
-
-    public async Task LogoutAsync()
-    {
-        await signInManager.SignOutAsync();
-    }
-    
     public async Task<CurrentUserResponseDTO> GetCurrentUserAsync()
     {
-        var applicationUser = await signInManager.UserManager.GetUserAsync(
-            httpContextAccessor.HttpContext!.User
-        );
+        var principal = httpContextAccessor.HttpContext?.User;
+        var sub = principal?.FindFirst(OpenIddictConstants.Claims.Subject)?.Value;
 
-        if (applicationUser is null)
+        if (!Guid.TryParse(sub, out _))
             throw new UserNotLoggedInException();
+
+        var applicationUser = await userManager.FindByIdAsync(sub!)
+                              ?? throw new UserNotLoggedInException();
 
         return new CurrentUserResponseDTO(
             applicationUser.Id,
             applicationUser.Email!,
-            applicationUser.UserName!
-        );
+            applicationUser.UserName!);
     }
 }
