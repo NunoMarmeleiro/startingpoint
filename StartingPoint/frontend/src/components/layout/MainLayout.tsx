@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Outlet, NavLink } from "react-router-dom"
 import { toast } from "sonner"
 
-import { useAuthentication } from "../../contexts/AuthenticationContext"
+import { useAuthentication } from "../../contexts/useAuthentication.ts"
 import { getErrorMessage } from "../../utils/getErrorMessages"
 
 import "./MainLayout.css"

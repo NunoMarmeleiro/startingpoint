@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
 import "./index.css"
 import App from "./App.tsx"
-import {AuthenticationProvider} from "./contexts/AuthenticationContext.tsx";
+import {AuthenticationProvider} from "./contexts/AuthenticationProvider.tsx";
 
 createRoot(document.getElementById("root")!).render(
     

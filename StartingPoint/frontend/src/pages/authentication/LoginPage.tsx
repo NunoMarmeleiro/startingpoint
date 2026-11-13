@@ -4,7 +4,7 @@ import type { LoginUserRequest } from "../../models/authentication/ApplicationUs
 import * as React from "react";
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import {toast} from "sonner";
-import { useAuthentication } from "../../contexts/AuthenticationContext"
+import { useAuthentication } from "../../contexts/useAuthentication.ts"
 import {Link} from "react-router-dom"
 import "./LoginPage.css"
 import {startAuthorization} from "../../services/authorization/authorization.ts";

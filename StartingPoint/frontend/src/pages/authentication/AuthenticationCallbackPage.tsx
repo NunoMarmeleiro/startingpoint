@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { saveTokens } from "../../services/authentication/tokenManager"
 
 import { exchangeAuthorizationCode } from "../../services/authentication/tokenService"
-import { useAuthentication } from "../../contexts/AuthenticationContext"
+import { useAuthentication } from "../../contexts/useAuthentication.ts"
 
 const STATE_KEY = "oauth_state"
 const CODE_VERIFIER_KEY = "oauth_code_verifier"
@@ -69,7 +69,7 @@ export default function AuthenticationCallbackPage() {
         }
 
         void handleCallback()
-    }, [navigate])
+    }, [navigate,refreshUser])
 
     if (error) {
         return <p>Authentication failed: {error}</p>

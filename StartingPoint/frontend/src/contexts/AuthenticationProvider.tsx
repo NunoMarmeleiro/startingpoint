@@ -1,9 +1,7 @@
 import {
-    createContext,
-    useContext,
     useEffect,
     useState,
-    type ReactNode,
+    type ReactNode, useCallback,
 } from "react"
 
 import type { 
@@ -20,27 +18,10 @@ import {
     setAuthenticationFailureHandler
 } from "../services/authentication/tokenManager.ts";
 import { endAuthentication } from "../services/authorization/authorization.ts";
+import { AuthenticationContext } from "./authenticationContext.ts";
 
-interface AuthenticationContextType {
-    user: CurrentUserResponse | null
-    isAuthenticated: boolean
-    isLoading: boolean
-    login: (request: LoginUserRequest) => Promise<void>
-    logout: () => void
-    refreshUser: () => Promise<void>
-}
 
-const AuthenticationContext = createContext<
-    AuthenticationContextType | undefined
->(undefined)
-
-interface AuthenticationProviderProps {
-    children: ReactNode
-}
-
-export function AuthenticationProvider({
-                                           children,
-                                       }: AuthenticationProviderProps) {
+export function AuthenticationProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<CurrentUserResponse | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
@@ -54,11 +35,11 @@ export function AuthenticationProvider({
             setAuthenticationFailureHandler(() => {})
         }
     }, [])
-    
-    async function refreshUser() {
+
+    const refreshUser = useCallback(async () => {
         const currentUser = await getCurrentUser()
         setUser(currentUser)
-    }
+    }, [])
 
     async function login(request: LoginUserRequest) {
         await loginRequest(request)
@@ -89,7 +70,7 @@ export function AuthenticationProvider({
         }
 
         void loadUser()
-    }, [])
+    }, [refreshUser])
 
     return (
         <AuthenticationContext.Provider
@@ -105,16 +86,4 @@ export function AuthenticationProvider({
             {children}
         </AuthenticationContext.Provider>
     )
-}
-
-export function useAuthentication() {
-    const context = useContext(AuthenticationContext)
-
-    if (!context) {
-        throw new Error(
-            "useAuthentication must be used within AuthenticationProvider"
-        )
-    }
-
-    return context
 }

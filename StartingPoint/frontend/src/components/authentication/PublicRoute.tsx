@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom"
-import { useAuthentication } from "../../contexts/AuthenticationContext"
+import { useAuthentication } from "../../contexts/useAuthentication.ts"
 import {Spinner} from "../../common/Spinner.tsx";
 
 export default function PublicRoute() {

@@ -7,32 +7,10 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AException_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2026_002E2_003Fresharper_002Dhost_003FSourcesCache_003F3f44c5b9eb6851301091fc65ce6dd6671e1a75f8a7f12837bc921ecf12ab_003FException_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AProblemDetails_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2026_002E2_003Fresharper_002Dhost_003FSourcesCache_003F656c392daf503fe14a1fe53fc449dbae6fe48d895df4a039d1ca03e2d837_003FProblemDetails_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AUserManager_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2026_002E2_003Fresharper_002Dhost_003FSourcesCache_003F43458798b06147ea5a8c94f0f58349e2a86ceaceffb6b59bd9d981b27d4236ef_003FUserManager_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWebApplication_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2026_002E2_003Fresharper_002Dhost_003FSourcesCache_003Fae62ba349516ed6ffc77677754e3f3813337894f9d942dfa80ae3055c49_003FWebApplication_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=58c56b00_002Df81e_002D48fd_002Da74f_002Dc8e84271fcf4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Continuous Testing" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5932a6e4_002D9e6c_002D41f6_002D8ba9_002Ded908131a2f0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Create_ShouldCreateTrip" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.Trip.Domain.TripTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.Trip.Application.TripServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Domain.UserTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WithValidRequest_ReturnsUserResponse&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WhenIdentityRejectsUser_ThrowsRegistrationException&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WhenRepositoryFails_RollsBackIdentityUser&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WhenRollbackFails_ThrowsRegistrationException&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.GetById_WhenUserExists_ReturnsUserResponse&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.GetById_WhenUserDoesNotExist_ThrowsEntityNotFoundException&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests.RegisterUserAsync_WhenUsernameAndEmailHasWhitespacesTrims_ReturnsUserResponse&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.User.Application.UserServiceTests&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.Common.Presentation.CommonControllerTests.Every_endpoint_requires_authorization_unless_allowlisted&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c2680a18_002D72ae_002D4d66_002D9fc1_002Df80354d936b7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Every_endpoint_requires_authorization_unless_allowlisted" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.Common.Presentation.CommonControllerTests&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d2daa22f_002D3123_002D4b1b_002Db0b8_002Db13dfc62047c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CommonControllerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::68F19859-41AE-41F8-B56F-1CC424061108::net10.0::StartingPoint.Tests.Common.Presentation.CommonControllerTests&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	
+	
+	</wpf:ResourceDictionary>

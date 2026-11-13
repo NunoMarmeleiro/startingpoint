@@ -69,7 +69,7 @@ export async function refreshAccessToken(): Promise<string | null> {
             })
 
             return tokens.access_token
-        } catch (error) {
+        } catch {
             clearTokens()
             onAuthenticationFailure?.()
             return null
