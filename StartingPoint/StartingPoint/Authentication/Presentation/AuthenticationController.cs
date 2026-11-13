@@ -31,7 +31,7 @@ public class AuthenticationController(
         return Ok();
     }
     
-    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]    
+    [Authorize(Policy = "User")]
     [HttpGet("me")]
     public async Task<IActionResult> GetCurrentUser()
     {

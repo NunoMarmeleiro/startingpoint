@@ -71,7 +71,6 @@ public class AuthorizationController(
     
     
     [HttpPost("~/connect/token")]
-    [AllowAnonymous]
     public async Task<IActionResult> Exchange()
     {
         var request = HttpContext.GetOpenIddictServerRequest()

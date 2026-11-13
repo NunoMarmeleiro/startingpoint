@@ -11,6 +11,7 @@ namespace StartingPoint.Trip.Presentation;
 public class TripController(TripService tripService) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<TripResponseDTO>> CreateTrip(
         CreateTripRequestDTO request)
     {
@@ -22,14 +23,14 @@ public class TripController(TripService tripService) : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<TripResponseDTO>> GetTripById(Guid id)
     {
         var response = await tripService.GetTripById(id);
         return Ok(response);
     }
     
-    [Authorize(AuthenticationSchemes =
-        OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "User")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
     {
@@ -38,6 +39,7 @@ public class TripController(TripService tripService) : ControllerBase
     }
     
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<TripResponseDTO>> UpdateTrip(
         Guid id,
         UpdateTripRequestDTO request)
@@ -47,6 +49,7 @@ public class TripController(TripService tripService) : ControllerBase
     }
     
     [HttpPost("{tripId:guid}/points-of-interest")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> AddPointOfInterest(
         Guid tripId,
         AddPointOfInterestRequestDTO request)
@@ -63,6 +66,7 @@ public class TripController(TripService tripService) : ControllerBase
     }
     
     [HttpPut("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> UpdatePointOfInterest(
         Guid tripId,
         Guid pointOfInterestId,
@@ -81,6 +85,7 @@ public class TripController(TripService tripService) : ControllerBase
     }
     
     [HttpDelete("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> DeletePointOfInterest(
         Guid tripId,
         Guid pointOfInterestId)
@@ -93,6 +98,7 @@ public class TripController(TripService tripService) : ControllerBase
     }
     
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
         await tripService.DeleteTrip(id);

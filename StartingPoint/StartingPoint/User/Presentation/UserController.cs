@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StartingPoint.User.Application.DTOs;
 namespace StartingPoint.User.Presentation;
@@ -8,6 +9,7 @@ public class UserController(
     IUserService userService) : ControllerBase
 {
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<UserResponseDTO>> GetUserById(Guid id)
     {
         var result = await userService.GetById(id);
