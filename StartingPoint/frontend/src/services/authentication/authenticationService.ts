@@ -10,10 +10,6 @@ export async function login(
 ): Promise<void> {
     await apiClient.post("/api/auth/login", request)
 }
-
-export async function logout(): Promise<void> {
-    await apiClient.post("/api/auth/logout")
-}
 export async function getCurrentUser(): Promise<CurrentUserResponse> {
     const response = await apiClient.get<CurrentUserResponse>(
         "/api/auth/me"

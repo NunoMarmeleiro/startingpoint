@@ -105,7 +105,6 @@ public class AuthorizationController(
     [HttpPost("~/connect/logout")]
     public async Task<IActionResult> Logout()
     {
-        // Read the cookie principal BEFORE signing out.
         var cookie = await HttpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
 
         if (cookie.Principal is not null)
@@ -115,7 +114,7 @@ public class AuthorizationController(
 
         return SignOut(
             authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-            properties: new AuthenticationProperties { RedirectUri = "/" });
+            properties: new AuthenticationProperties { RedirectUri = "/login" });
     }
 
 }

@@ -36,3 +36,16 @@ export async function startAuthorization(): Promise<void> {
 
     window.location.assign(authorizationUrl.toString())
 }
+
+export function endAuthentication(idToken: string | null): void {
+    const logoutUrl = new URL(
+        environment.oauth.logoutEndpoint,
+        environment.apiBaseUrl
+    )
+
+    logoutUrl.searchParams.set("client_id", environment.oauth.clientId)
+    logoutUrl.searchParams.set("post_logout_redirect_uri", environment.oauth.postLogoutRedirectUri)
+
+    if (idToken) logoutUrl.searchParams.set("id_token_hint", idToken)
+    window.location.assign(logoutUrl.toString())
+}

@@ -44,13 +44,18 @@ public class IdentityUserAuthorizationService(
         var subject = userManager.GetUserId(cookiePrincipal);
         if (string.IsNullOrEmpty(subject)) return;
 
+        var authorizations = new List<object>();
         await foreach (var authorization in authorizationManager.FindBySubjectAsync(subject))
-        {
-            var id = await authorizationManager.GetIdAsync(authorization);
-            if (id is not null)
-                await tokenManager.RevokeByAuthorizationIdAsync(id);
+            authorizations.Add(authorization);
 
+        var tokens = new List<object>();
+        await foreach (var token in tokenManager.FindBySubjectAsync(subject))
+            tokens.Add(token);
+
+        foreach (var token in tokens)
+            await tokenManager.TryRevokeAsync(token);
+
+        foreach (var authorization in authorizations)
             await authorizationManager.TryRevokeAsync(authorization);
-        }
     }
 }

@@ -13,20 +13,20 @@ import type {
 
 import {
     login as loginRequest,
-    logout as logoutRequest,
     getCurrentUser,
 } from "../services/authentication/authenticationService"
 import {
-    clearTokens,
+    clearTokens, getAccessToken, getIdToken,
     setAuthenticationFailureHandler
 } from "../services/authentication/tokenManager.ts";
+import { endAuthentication } from "../services/authorization/authorization.ts";
 
 interface AuthenticationContextType {
     user: CurrentUserResponse | null
     isAuthenticated: boolean
     isLoading: boolean
     login: (request: LoginUserRequest) => Promise<void>
-    logout: () => Promise<void>
+    logout: () => void
     refreshUser: () => Promise<void>
 }
 
@@ -46,8 +46,8 @@ export function AuthenticationProvider({
 
     useEffect(() => {
         setAuthenticationFailureHandler(() => {
-            console.error("[Authentication] Refresh failure triggered logout")
-            void logout()
+            clearTokens()
+            setUser(null)
         })
 
         return () => {
@@ -64,18 +64,21 @@ export function AuthenticationProvider({
         await loginRequest(request)
     }
 
-    async function logout() {
+    function logout() {
+        setIsLoading(true);
+        const idToken = getIdToken()
         clearTokens()
-
-        try {
-            await logoutRequest()
-        } finally {
-            setUser(null)
-        }
+        endAuthentication(idToken);
+        setIsLoading(false);
     }
     
     useEffect(() => {
         async function loadUser() {
+            if (!getAccessToken()) {
+                setIsLoading(false)
+                return
+            }
+            
             try {
                 await refreshUser()
             } catch {
@@ -85,7 +88,7 @@ export function AuthenticationProvider({
             }
         }
 
-        loadUser()
+        void loadUser()
     }, [])
 
     return (

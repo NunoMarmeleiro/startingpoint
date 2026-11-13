@@ -10,6 +10,7 @@ import POICard from "../../components/pois/POICard"
 import type {PointOfInterest} from "../../models/pois/PointOfInterest.ts";
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import ConfirmDialog from "../../common/ConfirmDialog.tsx";
+import {Spinner} from "../../common/Spinner.tsx";
 
 function TripDetailsPage() {
     const navigate = useNavigate();
@@ -104,10 +105,7 @@ function TripDetailsPage() {
             </Link>
 
             {isLoading ? (
-                <div className="trip-details__loading">
-                    <span className="big-loader"></span>
-                    <p>Loading trip...</p>
-                </div>
+                <Spinner message="Loading trip..." />
             ) : !trip ? (
                 <div className="trip-details__empty">
                     <h2>Unable to load trip</h2>

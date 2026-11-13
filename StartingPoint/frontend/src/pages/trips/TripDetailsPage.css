@@ -115,16 +115,6 @@
     color: var(--color-text);
 }
 
-.trip-details__loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    min-height: 300px;
-
-    color: var(--color-text-muted);
-}
-
 .trip-details__empty {
     display: flex;
     flex-direction: column;

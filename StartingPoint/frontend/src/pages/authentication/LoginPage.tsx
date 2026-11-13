@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useRef, useState} from "react";
 import type { SyntheticEvent } from "react";
 import type { LoginUserRequest } from "../../models/authentication/ApplicationUser";
 import * as React from "react";
@@ -11,6 +11,7 @@ import {startAuthorization} from "../../services/authorization/authorization.ts"
 
 export default function LoginPage() {
     const { login } = useAuthentication()
+    const passwordRef = useRef<HTMLInputElement>(null)
     const [formData, setFormData] = useState<LoginUserRequest>({
         emailOrUsername: "",
         password: ""
@@ -32,6 +33,11 @@ export default function LoginPage() {
             await login(formData)
             await startAuthorization()
         } catch (error: unknown) {
+            setFormData(previous => ({
+                ...previous,
+                password: ""
+            }));
+            passwordRef.current?.focus()
             toast.error(getErrorMessage(error))
         }
     }
@@ -60,6 +66,7 @@ export default function LoginPage() {
                     <div className="login-form-group">
                         <label htmlFor="password">Password</label>
                         <input
+                            ref={passwordRef}
                             id="password"
                             name="password"
                             type="password"

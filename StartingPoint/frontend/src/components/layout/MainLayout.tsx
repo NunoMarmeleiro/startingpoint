@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Outlet, NavLink, useNavigate } from "react-router-dom"
+import { Outlet, NavLink } from "react-router-dom"
 import { toast } from "sonner"
 
 import { useAuthentication } from "../../contexts/AuthenticationContext"
@@ -10,14 +10,11 @@ import "./MainLayout.css"
 export default function MainLayout() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
-    const navigate = useNavigate()
     const { user, logout } = useAuthentication()
 
     const handleLogout = async () => {
         try {
-            await logout()
-            toast.success("Logged out successfully")
-            navigate("/login")
+            logout()
         } catch (error: unknown) {
             toast.error(getErrorMessage(error))
         }

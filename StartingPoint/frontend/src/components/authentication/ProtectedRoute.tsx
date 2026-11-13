@@ -1,20 +1,17 @@
 import { Navigate, Outlet } from "react-router-dom"
 import { useAuthentication } from "../../contexts/AuthenticationContext"
-import "./ProtectedRoute.css"
+import {Spinner} from "../../common/Spinner.tsx";
 
 export default function ProtectedRoute() {
     const { isAuthenticated, isLoading } = useAuthentication()
 
     if (isLoading) {
         return (
-        <div className="protected-route__loading">
-            <span className="big-loader"></span>
-            <p>Loading...</p>
-        </div>
+            <Spinner />
         )
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !isLoading) {
         return <Navigate to="/login" replace />
     }
 
