@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import TripModal from "./TripModal"
 import type { Trip } from "../../models/trips/Trip"
 
-vi.mock("../../services/tripService", () => ({
+vi.mock("../../services/trips/tripService", () => ({
     createTrip: vi.fn(),
     updateTrip: vi.fn(),
 }))

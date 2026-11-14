@@ -7,7 +7,7 @@ import { getTrips, deleteTrip } from "../../services/trips/tripService"
 import type { Trip } from "../../models/trips/Trip"
 import { MemoryRouter } from "react-router-dom"
 
-vi.mock("../../services/tripService", () => ({
+vi.mock("../../services/trips/tripService", () => ({
     getTrips: vi.fn(),
     deleteTrip: vi.fn(),
 }))

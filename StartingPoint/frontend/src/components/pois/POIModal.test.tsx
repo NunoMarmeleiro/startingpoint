@@ -5,7 +5,7 @@ import { toast } from "sonner"
 import POIModal from "./POIModal"
 import {updatePointOfInterest} from "../../services/trips/tripService.ts";
 
-vi.mock("../../services/tripService", () => ({
+vi.mock("../../services/trips/tripService", () => ({
     addPointOfInterest: vi.fn(),
     updatePointOfInterest: vi.fn(),
 }))
