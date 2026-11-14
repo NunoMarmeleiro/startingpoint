@@ -1,4 +1,5 @@
 using Moq;
+using StartingPoint.Common.Application.Abstractions;
 using StartingPoint.Common.Exceptions;
 using StartingPoint.Trip.Application.DTOs;
 using StartingPoint.Trip.Application.Repositories;
@@ -11,21 +12,56 @@ namespace StartingPoint.Tests.Trip.Application;
 public class TripServiceTests
 {
     private readonly Mock<ITripRepository> _repositoryMock = new();
+    private readonly Mock<ICurrentUser> _currentUserMock = new();
+    private readonly Guid _ownerId = Guid.NewGuid();
     private readonly TripService _tripService;
-    
+
     public TripServiceTests()
     {
-        _tripService = new TripService(_repositoryMock.Object);
+        // Without this setup, ICurrentUser.Id returns Guid.Empty and every
+        // owner-scoped repository setup below would never match.
+        _currentUserMock.Setup(user => user.Id).Returns(_ownerId);
+
+        _tripService = new TripService(_repositoryMock.Object, _currentUserMock.Object);
     }
-    
+
+    private DomainTrip CreateTrip(
+        string name = "Barcelona Trip",
+        string destination = "Barcelona",
+        Guid? ownerId = null)
+    {
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        return DomainTrip.Create(
+            name,
+            destination,
+            dateRange,
+            ownerId ?? _ownerId);
+    }
+
+    private void SetupTripFound(DomainTrip trip)
+    {
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAndOwnerIdAsync(trip.Id, _ownerId))
+            .ReturnsAsync(trip);
+    }
+
+    private void SetupTripNotFound(Guid tripId)
+    {
+        _repositoryMock
+            .Setup(repository => repository.GetByIdAndOwnerIdAsync(tripId, _ownerId))
+            .ReturnsAsync((DomainTrip?)null);
+    }
+
     [Fact]
     public async Task CreateTrip_ShouldCreateTrip()
     {
         var date1 = new DateOnly(2026, 10, 1);
         var date2 = new DateOnly(2026, 10, 5);
-        
-        
-        var tripDTO = new  CreateTripRequestDTO("Barcelona Trip", "Barcelona",date1,date2);
+
+        var tripDTO = new CreateTripRequestDTO("Barcelona Trip", "Barcelona", date1, date2);
         var tripResponseDTO = await _tripService.CreateTrip(tripDTO);
 
         Assert.NotEqual(Guid.Empty, tripResponseDTO.Id);
@@ -33,31 +69,23 @@ public class TripServiceTests
         Assert.Equal("Barcelona", tripResponseDTO.Destination);
         Assert.Equal(date1, tripResponseDTO.StartDate);
         Assert.Equal(date2, tripResponseDTO.EndDate);
+
         _repositoryMock.Verify(
             repository => repository.AddAsync(
                 It.Is<DomainTrip>(trip =>
                     trip.Name == "Barcelona Trip" &&
                     trip.Destination == "Barcelona" &&
                     trip.DateRange.Start == date1 &&
-                    trip.DateRange.End == date2)),
+                    trip.DateRange.End == date2 &&
+                    trip.OwnerId == _ownerId)),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task GetTrip_ShouldReturnTrip()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         var result = await _tripService.GetTripById(trip.Id);
 
@@ -67,44 +95,56 @@ public class TripServiceTests
         Assert.Equal(trip.Destination, result.Destination);
         Assert.Equal(trip.DateRange.Start, result.StartDate);
         Assert.Equal(trip.DateRange.End, result.EndDate);
+        Assert.Equal(trip.OwnerId, result.OwnerId);
 
         _repositoryMock.Verify(
-            repository => repository.GetByIdAsync(trip.Id),
+            repository => repository.GetByIdAndOwnerIdAsync(trip.Id, _ownerId),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task GetTrip_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var id = Guid.NewGuid();
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(id))
-            .ReturnsAsync((DomainTrip?)null);
+        SetupTripNotFound(id);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.GetTripById(id));
 
         _repositoryMock.Verify(
-            repository => repository.GetByIdAsync(id),
+            repository => repository.GetByIdAndOwnerIdAsync(id, _ownerId),
             Times.Once);
     }
-    
+
+    [Fact]
+    public async Task GetTrip_ShouldThrowNotFoundException_WhenTripBelongsToAnotherUser()
+    {
+        // The trip belongs to the original owner.
+        var trip = CreateTrip();
+        SetupTripFound(trip);
+
+        // A different user is now making the request.
+        var otherUserId = Guid.NewGuid();
+        _currentUserMock.Setup(user => user.Id).Returns(otherUserId);
+
+        // The service must query with the caller's id, so the repository
+        // finds nothing and the service reports "not found" (not "forbidden").
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.GetTripById(trip.Id));
+
+        _repositoryMock.Verify(
+            repository => repository.GetByIdAndOwnerIdAsync(trip.Id, otherUserId),
+            Times.Once);
+        _repositoryMock.Verify(
+            repository => repository.GetByIdAndOwnerIdAsync(trip.Id, _ownerId),
+            Times.Never);
+    }
+
     [Fact]
     public async Task AddPointOfInterest_ShouldAddPointOfInterestToTrip()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         await _tripService.AddPointOfInterest(
             trip.Id,
@@ -126,15 +166,12 @@ public class TripServiceTests
             repository => repository.UpdateAsync(trip),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task AddPointOfInterest_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var tripId = Guid.NewGuid();
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((DomainTrip?)null);
+        SetupTripNotFound(tripId);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.AddPointOfInterest(
@@ -143,26 +180,15 @@ public class TripServiceTests
                 POICategory.HistoricalSite));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task AddPointOfInterest_ShouldAddAllPointOfInterestInformation()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         await _tripService.AddPointOfInterest(
             trip.Id,
@@ -184,22 +210,12 @@ public class TripServiceTests
             repository => repository.UpdateAsync(trip),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task AddPointOfInterest_ShouldThrow_WhenNameIsEmpty()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         await Assert.ThrowsAsync<DomainException>(
             () => _tripService.AddPointOfInterest(
@@ -213,39 +229,22 @@ public class TripServiceTests
             repository => repository.UpdateAsync(trip),
             Times.Never);
     }
-    
+
     [Fact]
-    public async Task GetAllTrips_ShouldReturnAllTrips()
+    public async Task GetAllTrips_ShouldReturnAllTripsOfCurrentUser()
     {
-        // Arrange
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 15));
-        
-        var dateRange2 = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 15));
         var trips = new List<DomainTrip>
         {
-            DomainTrip.Create(
-                "Japan",
-                "Tokyo",
-                dateRange),
-
-            DomainTrip.Create(
-                "Portugal",
-                "Porto",
-                dateRange2)
+            CreateTrip("Japan", "Tokyo"),
+            CreateTrip("Portugal", "Porto")
         };
 
         _repositoryMock
-            .Setup(repository => repository.GetAllAsync())
+            .Setup(repository => repository.GetAllByOwnerIdAsync(_ownerId))
             .ReturnsAsync(trips);
 
-        // Act
         var result = await _tripService.GetAllTrips();
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(2, result.Count());
 
@@ -258,45 +257,32 @@ public class TripServiceTests
             trip.Destination == "Porto");
 
         _repositoryMock.Verify(
-            repository => repository.GetAllAsync(),
+            repository => repository.GetAllByOwnerIdAsync(_ownerId),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task GetAllTrips_WhenNoTripsExist_ShouldReturnEmptyCollection()
     {
-        // Arrange
         _repositoryMock
-            .Setup(repository => repository.GetAllAsync())
+            .Setup(repository => repository.GetAllByOwnerIdAsync(_ownerId))
             .ReturnsAsync(new List<DomainTrip>());
 
-        // Act
         var result = await _tripService.GetAllTrips();
 
-        // Assert
         Assert.NotNull(result);
         Assert.Empty(result);
 
         _repositoryMock.Verify(
-            repository => repository.GetAllAsync(),
+            repository => repository.GetAllByOwnerIdAsync(_ownerId),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task UpdateTrip_ShouldUpdateTrip()
     {
-        var originalDateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            originalDateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         var newStartDate = new DateOnly(2026, 11, 1);
         var newEndDate = new DateOnly(2026, 11, 7);
@@ -307,9 +293,7 @@ public class TripServiceTests
             newStartDate,
             newEndDate);
 
-        var result = await _tripService.UpdateTrip(
-            trip.Id,
-            request);
+        var result = await _tripService.UpdateTrip(trip.Id, request);
 
         Assert.Equal(trip.Id, result.Id);
         Assert.Equal("Madrid Trip", result.Name);
@@ -321,15 +305,12 @@ public class TripServiceTests
             repository => repository.UpdateAsync(trip),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task UpdateTrip_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var tripId = Guid.NewGuid();
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((DomainTrip?)null);
+        SetupTripNotFound(tripId);
 
         var request = new UpdateTripRequestDTO(
             "Madrid Trip",
@@ -341,26 +322,15 @@ public class TripServiceTests
             () => _tripService.UpdateTrip(tripId, request));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task UpdateTrip_ShouldThrow_WhenEndDateIsBeforeStartDate()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         var request = new UpdateTripRequestDTO(
             "Madrid Trip",
@@ -372,22 +342,14 @@ public class TripServiceTests
             () => _tripService.UpdateTrip(trip.Id, request));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task UpdatePointOfInterest_ShouldUpdatePointOfInterest()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
+        var trip = CreateTrip();
 
         var poi = PointOfInterest.Create(
             "Old Name",
@@ -397,10 +359,7 @@ public class TripServiceTests
             "Old notes");
 
         trip.AddPointOfInterest(poi);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        SetupTripFound(trip);
 
         await _tripService.UpdatePointOfInterest(
             trip.Id,
@@ -421,16 +380,13 @@ public class TripServiceTests
             repository => repository.UpdateAsync(trip),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task UpdatePointOfInterest_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var tripId = Guid.NewGuid();
         var poiId = Guid.NewGuid();
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((DomainTrip?)null);
+        SetupTripNotFound(tripId);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.UpdatePointOfInterest(
@@ -440,26 +396,15 @@ public class TripServiceTests
                 POICategory.HistoricalSite));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task UpdatePointOfInterest_ShouldThrowNotFoundException_WhenPointOfInterestDoesNotExist()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         var poiId = Guid.NewGuid();
 
@@ -471,36 +416,23 @@ public class TripServiceTests
                 POICategory.HistoricalSite));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task DeletePointOfInterest_ShouldRemovePointOfInterest()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
+        var trip = CreateTrip();
 
         var poi = PointOfInterest.Create(
             "Sagrada Família",
             POICategory.Attraction);
 
         trip.AddPointOfInterest(poi);
+        SetupTripFound(trip);
 
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
-
-        await _tripService.DeletePointOfInterest(
-            trip.Id,
-            poi.Id);
+        await _tripService.DeletePointOfInterest(trip.Id, poi.Id);
 
         Assert.Empty(trip.PointsOfInterest);
 
@@ -508,72 +440,43 @@ public class TripServiceTests
             repository => repository.UpdateAsync(trip),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task DeletePointOfInterest_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var tripId = Guid.NewGuid();
         var poiId = Guid.NewGuid();
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((DomainTrip?)null);
+        SetupTripNotFound(tripId);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
-            () => _tripService.DeletePointOfInterest(
-                tripId,
-                poiId));
+            () => _tripService.DeletePointOfInterest(tripId, poiId));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task DeletePointOfInterest_ShouldThrowNotFoundException_WhenPointOfInterestDoesNotExist()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         var poiId = Guid.NewGuid();
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
-            () => _tripService.DeletePointOfInterest(
-                trip.Id,
-                poiId));
+            () => _tripService.DeletePointOfInterest(trip.Id, poiId));
 
         _repositoryMock.Verify(
-            repository => repository.UpdateAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.UpdateAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
-    
+
     [Fact]
     public async Task DeleteTrip_ShouldDeleteTrip()
     {
-        var dateRange = DateRange.Create(
-            new DateOnly(2026, 10, 1),
-            new DateOnly(2026, 10, 5));
-
-        var trip = DomainTrip.Create(
-            "Barcelona Trip",
-            "Barcelona",
-            dateRange);
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(trip.Id))
-            .ReturnsAsync(trip);
+        var trip = CreateTrip();
+        SetupTripFound(trip);
 
         await _tripService.DeleteTrip(trip.Id);
 
@@ -581,22 +484,34 @@ public class TripServiceTests
             repository => repository.DeleteAsync(trip),
             Times.Once);
     }
-    
+
     [Fact]
     public async Task DeleteTrip_ShouldThrowNotFoundException_WhenTripDoesNotExist()
     {
         var tripId = Guid.NewGuid();
-
-        _repositoryMock
-            .Setup(repository => repository.GetByIdAsync(tripId))
-            .ReturnsAsync((DomainTrip?)null);
+        SetupTripNotFound(tripId);
 
         await Assert.ThrowsAsync<EntityNotFoundException>(
             () => _tripService.DeleteTrip(tripId));
 
         _repositoryMock.Verify(
-            repository => repository.DeleteAsync(
-                It.IsAny<DomainTrip>()),
+            repository => repository.DeleteAsync(It.IsAny<DomainTrip>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteTrip_ShouldNotDeleteTrip_WhenTripBelongsToAnotherUser()
+    {
+        var trip = CreateTrip();
+        SetupTripFound(trip);
+
+        _currentUserMock.Setup(user => user.Id).Returns(Guid.NewGuid());
+
+        await Assert.ThrowsAsync<EntityNotFoundException>(
+            () => _tripService.DeleteTrip(trip.Id));
+
+        _repositoryMock.Verify(
+            repository => repository.DeleteAsync(It.IsAny<DomainTrip>()),
             Times.Never);
     }
 }

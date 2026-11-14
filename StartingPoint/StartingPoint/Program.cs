@@ -13,6 +13,8 @@ using StartingPoint.Authentication.Application.Services;
 using StartingPoint.Authorization.Application;
 using StartingPoint.Authorization.Application.Services;
 using StartingPoint.Authorization.Infrastructure;
+using StartingPoint.Common.Application.Abstractions;
+using StartingPoint.Common.Infrastructure;
 using StartingPoint.User.Application.Services;
 using StartingPoint.User.Infrastructure.Authentication;
 using StartingPoint.User.Infrastructure.Persistence;
@@ -143,6 +145,10 @@ builder.Services.AddOpenIddict()
         options.EnableAuthorizationEntryValidation();
         options.EnableTokenEntryValidation();
     });
+
+//Current User
+builder.Services.AddScoped<ICurrentUser, HttpCurrentUser>();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

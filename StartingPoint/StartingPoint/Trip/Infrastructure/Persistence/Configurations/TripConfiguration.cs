@@ -8,6 +8,11 @@ public class TripConfiguration : IEntityTypeConfiguration<Domain.Trip>
     public void Configure(EntityTypeBuilder<Domain.Trip> builder)
     {
         builder.HasKey(trip => trip.Id);
+        
+        builder.Property(trip => trip.OwnerId)
+            .IsRequired();
+
+        builder.HasIndex(trip => trip.OwnerId);
 
         builder.Property(trip => trip.Name)
             .IsRequired()

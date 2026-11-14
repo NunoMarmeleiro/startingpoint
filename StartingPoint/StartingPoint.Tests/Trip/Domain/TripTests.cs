@@ -13,12 +13,15 @@ public class TripTests
         var dateRange = DateRange.Create(
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
+        
+        var ownerId = Guid.NewGuid();
 
         // Act
         var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
-            dateRange);
+            dateRange,
+            ownerId);
 
         // Assert
         Assert.NotEqual(Guid.Empty, trip.Id);
@@ -30,6 +33,7 @@ public class TripTests
     [Fact]
     public void Create_ShouldRejectEmptyName()
     {
+        var ownerId = Guid.NewGuid();
         var dateRange = DateRange.Create(
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
@@ -38,11 +42,29 @@ public class TripTests
             DomainTrip.Create(
                 "",
                 "Barcelona",
-                dateRange));
+                dateRange,
+                ownerId));
     }
     
     [Fact]
     public void Create_ShouldRejectEmptyDestination()
+    {
+        var ownerId = Guid.NewGuid();
+        var dateRange = DateRange.Create(
+            new DateOnly(2026, 10, 1),
+            new DateOnly(2026, 10, 5));
+
+        Assert.Throws<DomainException>(() =>
+            DomainTrip.Create(
+                "Barcelona Trip",
+                "",
+                dateRange,
+                ownerId));
+    }
+
+
+    [Fact]
+    public void Create_ShouldRejectEmptyOwnerId()
     {
         var dateRange = DateRange.Create(
             new DateOnly(2026, 10, 1),
@@ -52,12 +74,14 @@ public class TripTests
             DomainTrip.Create(
                 "Barcelona Trip",
                 "",
-                dateRange));
+                dateRange,
+                Guid.Empty));
     }
     
     [Fact]
     public void AddPointOfInterest_ShouldAddPoiToTrip()
     {
+        var ownerId = Guid.NewGuid();
         var dateRange = DateRange.Create(
             new DateOnly(2026, 10, 1),
             new DateOnly(2026, 10, 5));
@@ -65,7 +89,8 @@ public class TripTests
         var trip = DomainTrip.Create(
             "Barcelona Trip",
             "Barcelona",
-            dateRange);
+            dateRange,
+            ownerId);
 
         var poi = PointOfInterest.Create(
             "Sagrada Família",

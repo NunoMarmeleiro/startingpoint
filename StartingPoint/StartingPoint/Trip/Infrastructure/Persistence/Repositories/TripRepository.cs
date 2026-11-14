@@ -11,22 +11,25 @@ public class TripRepository(TripDbContext dbContext) : ITripRepository
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<Domain.Trip?> GetByIdAsync(Guid id)
+    public async Task<Domain.Trip?> GetByIdAndOwnerIdAsync(Guid id, Guid ownerId)
     {
         return await dbContext.Trips
             .Include(trip => trip.PointsOfInterest)
-            .SingleOrDefaultAsync(trip => trip.Id == id);
+            .SingleOrDefaultAsync(
+                trip => trip.Id == id && trip.OwnerId == ownerId);
     }
 
     public async Task UpdateAsync(Domain.Trip trip)
     {
         await dbContext.SaveChangesAsync();
     }
-    
-    public async Task<IEnumerable<Domain.Trip>> GetAllAsync()
+
+    public async Task<IEnumerable<Domain.Trip>> GetAllByOwnerIdAsync(Guid ownerId)
     {
         return await dbContext.Trips
+            .AsNoTracking()
             .Include(trip => trip.PointsOfInterest)
+            .Where(trip => trip.OwnerId == ownerId)
             .ToListAsync();
     }
 

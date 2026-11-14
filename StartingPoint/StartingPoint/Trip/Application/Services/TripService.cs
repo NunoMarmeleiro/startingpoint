@@ -1,3 +1,4 @@
+using StartingPoint.Common.Application.Abstractions;
 using StartingPoint.Common.Exceptions;
 using StartingPoint.Trip.Application.DTOs;
 using StartingPoint.Trip.Application.Repositories;
@@ -5,14 +6,8 @@ using StartingPoint.Trip.Domain;
 
 namespace StartingPoint.Trip.Application.Services;
 
-public class TripService
+public class TripService(ITripRepository repository, ICurrentUser currentUser)
 {
-    private readonly ITripRepository _repository;
-    public TripService(ITripRepository repository)
-    {
-        _repository = repository;
-    }
-    
     public async Task<TripResponseDTO> CreateTrip(
         CreateTripRequestDTO request)
     {
@@ -23,9 +18,10 @@ public class TripService
         var trip = Domain.Trip.Create(
             request.Name,
             request.Destination,
-            dateRange);
+            dateRange,
+            currentUser.Id);
 
-        await _repository.AddAsync(trip);
+        await repository.AddAsync(trip);
 
 
         return new TripResponseDTO(
@@ -42,13 +38,15 @@ public class TripService
                     poi.Category,
                     poi.Address,
                     poi.Notes))
-                .ToList()
+                .ToList(),
+            trip.OwnerId
             );
     }
 
     public async Task<TripResponseDTO> GetTripById(Guid id)
     {
-        var trip = await _repository.GetByIdAsync(id);
+        
+        var trip = await repository.GetByIdAndOwnerIdAsync(id, currentUser.Id);
         if (trip is null)
         {
             throw new EntityNotFoundException(nameof(Trip), id);
@@ -67,7 +65,8 @@ public class TripService
                     poi.Category,
                     poi.Address,
                     poi.Notes))
-                .ToList());
+                .ToList(),
+            trip.OwnerId);
     }
     
     public async Task AddPointOfInterest(
@@ -78,7 +77,7 @@ public class TripService
         string? address = null,
         string? notes = null)
     {
-        var trip = await _repository.GetByIdAsync(tripId);
+        var trip = await repository.GetByIdAndOwnerIdAsync(tripId, currentUser.Id);
 
         if (trip is null)
         {
@@ -94,12 +93,12 @@ public class TripService
 
         trip.AddPointOfInterest(pointOfInterest);
 
-        await _repository.UpdateAsync(trip);
+        await repository.UpdateAsync(trip);
     }
     
     public async Task<IEnumerable<TripResponseDTO>> GetAllTrips()
     {
-        var trips = await _repository.GetAllAsync();
+        var trips = await repository.GetAllByOwnerIdAsync(currentUser.Id);
 
         return trips.Select(trip => new TripResponseDTO
         (
@@ -116,7 +115,8 @@ public class TripService
                     poi.Category,
                     poi.Address,
                     poi.Notes))
-                .ToList()
+                .ToList(),
+            trip.OwnerId
         ));
     }
     
@@ -124,7 +124,7 @@ public class TripService
         Guid id,
         UpdateTripRequestDTO request)
     {
-        var trip = await _repository.GetByIdAsync(id);
+        var trip = await repository.GetByIdAndOwnerIdAsync(id, currentUser.Id);
 
         if (trip is null)
         {
@@ -140,7 +140,7 @@ public class TripService
             request.Destination,
             dateRange);
 
-        await _repository.UpdateAsync(trip);
+        await repository.UpdateAsync(trip);
 
         return new TripResponseDTO(
             trip.Id,
@@ -156,7 +156,8 @@ public class TripService
                     poi.Category,
                     poi.Address,
                     poi.Notes))
-                .ToList());
+                .ToList(),
+            trip.OwnerId);
     }
     
     public async Task UpdatePointOfInterest(
@@ -168,7 +169,7 @@ public class TripService
         string? address = null,
         string? notes = null)
     {
-        var trip = await _repository.GetByIdAsync(tripId);
+        var trip = await repository.GetByIdAndOwnerIdAsync(tripId, currentUser.Id);
 
         if (trip is null)
         {
@@ -194,14 +195,14 @@ public class TripService
             address,
             notes);
 
-        await _repository.UpdateAsync(trip);
+        await repository.UpdateAsync(trip);
     }
     
     public async Task DeletePointOfInterest(
         Guid tripId,
         Guid pointOfInterestId)
     {
-        var trip = await _repository.GetByIdAsync(tripId);
+        var trip = await repository.GetByIdAndOwnerIdAsync(tripId, currentUser.Id);
 
         if (trip is null)
         {
@@ -222,12 +223,12 @@ public class TripService
         
         trip.RemovePointOfInterest(pointOfInterestId);
 
-        await _repository.UpdateAsync(trip);
+        await repository.UpdateAsync(trip);
     }
     
     public async Task DeleteTrip(Guid id)
     {
-        var trip = await _repository.GetByIdAsync(id);
+        var trip = await repository.GetByIdAndOwnerIdAsync(id, currentUser.Id);
 
         if (trip is null)
         {
@@ -236,6 +237,6 @@ public class TripService
                 id);
         }
 
-        await _repository.DeleteAsync(trip);
+        await repository.DeleteAsync(trip);
     }
 }

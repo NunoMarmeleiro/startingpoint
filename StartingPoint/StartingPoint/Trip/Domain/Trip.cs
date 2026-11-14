@@ -13,6 +13,8 @@ public class Trip
     public string Destination { get; private set; } = null!;
 
     public DateRange DateRange { get; private set; } = null!;
+    
+    public Guid OwnerId { get; private set; }
 
     public IReadOnlyCollection<PointOfInterest> PointsOfInterest =>
         _pointsOfInterest.AsReadOnly();
@@ -25,18 +27,21 @@ public class Trip
         Guid id,
         string name,
         string destination,
-        DateRange dateRange)
+        DateRange dateRange,
+        Guid ownerId)
     {
         Id = id;
         Name = name;
         Destination = destination;
         DateRange = dateRange;
+        OwnerId = ownerId;
     }
 
     public static Trip Create(
         string name,
         string destination,
-        DateRange dateRange)
+        DateRange dateRange,
+        Guid ownerId)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -50,11 +55,18 @@ public class Trip
                 "Trip destination cannot be empty.");
         }
 
+        if (ownerId == Guid.Empty)
+        {
+            throw new DomainException(
+                "Trip must contain an owner.");
+        }
+
         return new Trip(
             Guid.NewGuid(),
             name.Trim(),
             destination.Trim(),
-            dateRange);
+            dateRange,
+            ownerId);
     }
 
     public void AddPointOfInterest(PointOfInterest pointOfInterest)
