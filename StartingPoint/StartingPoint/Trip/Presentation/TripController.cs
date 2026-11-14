@@ -1,26 +1,21 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using StartingPoint.Trip.Application.DTOs;
 using StartingPoint.Trip.Application.Services;
-using StartingPoint.Trip.Domain;
 
 namespace StartingPoint.Trip.Presentation;
 
 [ApiController]
 [Route("api/trips")]
-public class TripController : ControllerBase
+public class TripController(TripService tripService) : ControllerBase
 {
-    private readonly TripService _tripService;
-    
-    public TripController(TripService tripService)
-    {
-        _tripService =  tripService;
-    }
-    
     [HttpPost]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<TripResponseDTO>> CreateTrip(
         CreateTripRequestDTO request)
     {
-        var response = await _tripService.CreateTrip(request);
+        var response = await tripService.CreateTrip(request);
         return CreatedAtAction(
             nameof(GetTripById),
             new { id = response.Id },
@@ -28,34 +23,38 @@ public class TripController : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<TripResponseDTO>> GetTripById(Guid id)
     {
-        var response = await _tripService.GetTripById(id);
+        var response = await tripService.GetTripById(id);
         return Ok(response);
     }
     
+    [Authorize(Policy = "User")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TripResponseDTO>>> GetAll()
     {
-        var trips = await _tripService.GetAllTrips();
+        var trips = await tripService.GetAllTrips();
         return Ok(trips);
     }
     
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<ActionResult<TripResponseDTO>> UpdateTrip(
         Guid id,
         UpdateTripRequestDTO request)
     {
-        var trip = await _tripService.UpdateTrip(id, request);
+        var trip = await tripService.UpdateTrip(id, request);
         return Ok(trip);
     }
     
     [HttpPost("{tripId:guid}/points-of-interest")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> AddPointOfInterest(
         Guid tripId,
         AddPointOfInterestRequestDTO request)
     {
-        await _tripService.AddPointOfInterest(
+        await tripService.AddPointOfInterest(
             tripId,
             request.Name,
             request.Category,
@@ -67,12 +66,13 @@ public class TripController : ControllerBase
     }
     
     [HttpPut("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> UpdatePointOfInterest(
         Guid tripId,
         Guid pointOfInterestId,
         UpdatePointOfInterestRequestDTO request)
     {
-        await _tripService.UpdatePointOfInterest(
+        await tripService.UpdatePointOfInterest(
             tripId,
             pointOfInterestId,
             request.Name,
@@ -85,11 +85,12 @@ public class TripController : ControllerBase
     }
     
     [HttpDelete("{tripId:guid}/points-of-interest/{pointOfInterestId:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> DeletePointOfInterest(
         Guid tripId,
         Guid pointOfInterestId)
     {
-        await _tripService.DeletePointOfInterest(
+        await tripService.DeletePointOfInterest(
             tripId,
             pointOfInterestId);
 
@@ -97,9 +98,10 @@ public class TripController : ControllerBase
     }
     
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "User")]
     public async Task<IActionResult> DeleteTrip(Guid id)
     {
-        await _tripService.DeleteTrip(id);
+        await tripService.DeleteTrip(id);
 
         return NoContent();
     }

@@ -1,7 +1,7 @@
 import { 
     type PointOfInterest,
     poiCategoryMetadata
-} from "../../models/PointOfInterest"
+} from "../../models/pois/PointOfInterest"
 import "./POICard.css"
 import * as React from "react";
 

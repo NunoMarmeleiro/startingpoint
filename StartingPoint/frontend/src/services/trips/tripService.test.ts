@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest"
-import apiClient from "./apiClient"
+import apiClient from "../apiClient"
 import { addPointOfInterest, deleteTrip, deletePointOfInterest } from "./tripService"
 
-vi.mock("./apiClient", () => ({
+vi.mock("../apiClient", () => ({
     default: {
         post: vi.fn(),
         delete: vi.fn(),

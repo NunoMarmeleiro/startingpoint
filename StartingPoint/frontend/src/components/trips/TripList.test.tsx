@@ -3,11 +3,11 @@ import userEvent from "@testing-library/user-event"
 import { vi, describe, it, expect, beforeEach } from "vitest"
 import { toast } from "sonner"
 import TripList from "./TripList"
-import { getTrips, deleteTrip } from "../../services/tripService"
-import type { Trip } from "../../models/Trip"
+import { getTrips, deleteTrip } from "../../services/trips/tripService"
+import type { Trip } from "../../models/trips/Trip"
 import { MemoryRouter } from "react-router-dom"
 
-vi.mock("../../services/tripService", () => ({
+vi.mock("../../services/trips/tripService", () => ({
     getTrips: vi.fn(),
     deleteTrip: vi.fn(),
 }))

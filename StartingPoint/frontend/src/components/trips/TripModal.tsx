@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useRef } from "react";
 import * as React from "react"
-import { createTrip, updateTrip } from "../../services/tripService"
-import type { Trip } from "../../models/Trip"
+import { createTrip, updateTrip } from "../../services/trips/tripService"
+import type { Trip } from "../../models/trips/Trip"
 import { toast } from "sonner"
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 

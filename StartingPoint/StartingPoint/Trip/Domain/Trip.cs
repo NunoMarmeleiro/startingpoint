@@ -8,11 +8,11 @@ public class Trip
 
     public Guid Id { get; private set; }
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } = null!;
 
-    public string Destination { get; private set; }
+    public string Destination { get; private set; } = null!;
 
-    public DateRange DateRange { get; private set; }
+    public DateRange DateRange { get; private set; } = null!;
 
     public IReadOnlyCollection<PointOfInterest> PointsOfInterest =>
         _pointsOfInterest.AsReadOnly();

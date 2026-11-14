@@ -3,9 +3,9 @@ import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 import { toast } from "sonner"
 import TripModal from "./TripModal"
-import type { Trip } from "../../models/Trip"
+import type { Trip } from "../../models/trips/Trip"
 
-vi.mock("../../services/tripService", () => ({
+vi.mock("../../services/trips/tripService", () => ({
     createTrip: vi.fn(),
     updateTrip: vi.fn(),
 }))
@@ -66,7 +66,7 @@ describe("CreateTripModal", () => {
         }
 
         const updateTripMock = vi.mocked(
-            (await import("../../services/tripService")).updateTrip
+            (await import("../../services/trips/tripService")).updateTrip
         )
 
         updateTripMock.mockResolvedValue(updatedTrip)
@@ -130,7 +130,7 @@ describe("CreateTripModal", () => {
         }
 
         const updateTripMock = vi.mocked(
-            (await import("../../services/tripService")).updateTrip
+            (await import("../../services/trips/tripService")).updateTrip
         )
 
         const onUpdated = vi.fn()
@@ -181,7 +181,7 @@ describe("CreateTripModal", () => {
         }
 
         const updateTripMock = vi.mocked(
-            (await import("../../services/tripService")).updateTrip
+            (await import("../../services/trips/tripService")).updateTrip
         )
 
         updateTripMock.mockRejectedValue(new Error("API error"))

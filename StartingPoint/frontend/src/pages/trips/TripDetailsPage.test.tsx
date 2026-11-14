@@ -10,9 +10,9 @@ import TripDetailsPage from "./TripDetailsPage"
 import {
     getTripById,
     deletePointOfInterest,
-} from "../../services/tripService"
+} from "../../services/trips/tripService"
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
-vi.mock("../../services/tripService", () => ({
+vi.mock("../../services/trips/tripService", () => ({
     getTripById: vi.fn(),
     deletePointOfInterest: vi.fn(),
 }))

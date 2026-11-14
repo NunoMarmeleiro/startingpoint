@@ -1,5 +1,3 @@
 .page {
-    width: min(1200px, 100% - 2rem);
     margin: 0 auto;
-    padding: var(--spacing-xl) 0;
 }

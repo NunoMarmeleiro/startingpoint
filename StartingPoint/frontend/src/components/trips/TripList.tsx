@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
-import type { Trip } from "../../models/Trip"
-import { getTrips } from "../../services/tripService"
+import type { Trip } from "../../models/trips/Trip"
+import { getTrips } from "../../services/trips/tripService"
 import { toast } from "sonner"
 import TripCard from "./TripCard"
 import "./TripList.css"
 import TripModal from "./TripModal"
-import { deleteTrip } from "../../services/tripService"
+import { deleteTrip } from "../../services/trips/tripService"
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import ConfirmDialog from "../../common/ConfirmDialog.tsx";
+import {Spinner} from "../../common/Spinner.tsx";
 
 function TripList() {
     const [trips, setTrips] = useState<Trip[]>([])
@@ -66,10 +67,7 @@ function TripList() {
             </header>
 
             {isLoading ? (
-                <div className="trip-list__loading">
-                    <span className="big-loader"></span>
-                    <p>Loading your trips...</p>
-                </div>
+                <Spinner message={"Loading your trips..."} />
             ) : trips.length === 0 ? (
                 <div className="trip-list__empty">
                     <h2>No trips yet</h2>

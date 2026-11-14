@@ -1,11 +1,11 @@
-import apiClient from "./apiClient"
+import apiClient from "../apiClient"
 import type { Trip,
     CreateTripRequest, 
     UpdateTripRequest,
-} from "../models/Trip"
+} from "../../models/trips/Trip"
 import type {
     AddPointOfInterestRequest,
-} from "../models/PointOfInterest"
+} from "../../models/pois/PointOfInterest"
 
 export async function getTrips(): Promise<Trip[]> {
     const response = await apiClient.get<Trip[]>("/api/trips")

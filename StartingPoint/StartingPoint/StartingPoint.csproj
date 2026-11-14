@@ -13,12 +13,18 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.13" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.13" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+        <PackageReference Include="OpenIddict.AspNetCore" Version="7.7.2" />
+        <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.7.2" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="User\Application\Exceptions\" />
     </ItemGroup>
 
 </Project>

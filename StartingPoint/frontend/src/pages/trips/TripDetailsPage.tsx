@@ -1,15 +1,16 @@
 import {useEffect, useState} from "react"
 import {Link, useNavigate, useParams} from "react-router-dom"
-import {deletePointOfInterest, deleteTrip, getTripById} from "../../services/tripService"
+import {deletePointOfInterest, deleteTrip, getTripById} from "../../services/trips/tripService"
 import { toast } from "sonner"
-import type {Trip} from "../../models/Trip"
+import type {Trip} from "../../models/trips/Trip"
 import TripModal from "../../components/trips/TripModal"
 import "./TripDetailsPage.css"
 import POIModal from "../../components/pois/POIModal"
 import POICard from "../../components/pois/POICard"
-import type {PointOfInterest} from "../../models/PointOfInterest.ts";
+import type {PointOfInterest} from "../../models/pois/PointOfInterest.ts";
 import {getErrorMessage} from "../../utils/getErrorMessages.ts";
 import ConfirmDialog from "../../common/ConfirmDialog.tsx";
+import {Spinner} from "../../common/Spinner.tsx";
 
 function TripDetailsPage() {
     const navigate = useNavigate();
@@ -104,10 +105,7 @@ function TripDetailsPage() {
             </Link>
 
             {isLoading ? (
-                <div className="trip-details__loading">
-                    <span className="big-loader"></span>
-                    <p>Loading trip...</p>
-                </div>
+                <Spinner message="Loading trip..." />
             ) : !trip ? (
                 <div className="trip-details__empty">
                     <h2>Unable to load trip</h2>

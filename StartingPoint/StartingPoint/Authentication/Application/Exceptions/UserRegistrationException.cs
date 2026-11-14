@@ -1,4 +1,4 @@
-namespace StartingPoint.User.Application.Exceptions;
+namespace StartingPoint.Authentication.Application.Exceptions;
 
 public class UserRegistrationException(
     string message,
