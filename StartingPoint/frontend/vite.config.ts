@@ -2,10 +2,12 @@ import { defineConfig } from "vitest/config"
 import react from "@vitejs/plugin-react"
 import mkcert from 'vite-plugin-mkcert'
 
-export default defineConfig({
-  plugins: [
+export default defineConfig(({ command, mode }) => {
+  const useMkcert = command === "serve" && mode !== "test" && !process.env.VITEST
+  return {
+    plugins: [
     react(),
-    mkcert(),
+      ...(useMkcert ? [mkcert()] : []),
   ],
   server: {
     host: 'localhost',
@@ -15,4 +17,4 @@ export default defineConfig({
     globals: true,
     setupFiles: "./src/test/setup.ts",
   },
-})
+}})
