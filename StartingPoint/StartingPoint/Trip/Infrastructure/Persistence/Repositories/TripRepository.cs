@@ -15,6 +15,7 @@ public class TripRepository(TripDbContext dbContext) : ITripRepository
     {
         return await dbContext.Trips
             .Include(trip => trip.PointsOfInterest)
+            .AsSplitQuery()
             .SingleOrDefaultAsync(
                 trip => trip.Id == id && trip.OwnerId == ownerId);
     }
@@ -29,6 +30,7 @@ public class TripRepository(TripDbContext dbContext) : ITripRepository
         return await dbContext.Trips
             .AsNoTracking()
             .Include(trip => trip.PointsOfInterest)
+            .AsSplitQuery()
             .Where(trip => trip.OwnerId == ownerId)
             .ToListAsync();
     }

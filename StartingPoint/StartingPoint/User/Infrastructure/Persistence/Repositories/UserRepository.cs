@@ -15,6 +15,6 @@ public class UserRepository(
     public async Task<Domain.User?> GetByIdAsync(Guid id)
     {
         return await dbContext.Users
-            .SingleOrDefaultAsync(trip => trip.Id == id);
+            .SingleOrDefaultAsync(user => user.Id == id);
     }
 }
